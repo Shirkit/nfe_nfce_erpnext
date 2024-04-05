@@ -1,0 +1,214 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-05 17:11:37.552889",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "informa\u00e7\u00f5es_da_nota_fiscal_tab",
+  "section_break_skh7",
+  "operacao",
+  "natureza_operacao",
+  "modelo",
+  "finalidade",
+  "ambiente",
+  "data_emissao",
+  "assincrono",
+  "section_break_wmkr",
+  "amended_from",
+  "informa\u00e7\u00f5es_do_cliente_tab",
+  "informa\u00e7\u00f5es_do_cliente_section",
+  "cpf",
+  "nome_completo",
+  "cnpj",
+  "razao_social",
+  "ie",
+  "consumidor_final",
+  "contribuinte",
+  "endere\u00e7o_section",
+  "link_endereco",
+  "informa\u00e7\u00f5es_dos_produtos_tab",
+  "informa\u00e7\u00f5es_do_pedido_tab",
+  "transporte_tab"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_skh7",
+   "fieldtype": "Section Break",
+   "label": "Informa\u00e7\u00f5es da Nota Fiscal"
+  },
+  {
+   "fieldname": "operacao",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Opera\u00e7\u00e3o",
+   "options": "Entrada\nSaida",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "natureza_operacao",
+   "fieldtype": "Data",
+   "label": "Natureza da Opera\u00e7\u00e3o",
+   "length": 60,
+   "reqd": 1
+  },
+  {
+   "fieldname": "modelo",
+   "fieldtype": "Select",
+   "label": "Modelo",
+   "options": "NF-e\nNFC-e",
+   "reqd": 1
+  },
+  {
+   "fieldname": "finalidade",
+   "fieldtype": "Select",
+   "label": "Finalidade",
+   "options": "NF-e normal\nAjuste/Estorno\nDevolu\u00e7\u00e3o",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ambiente",
+   "fieldtype": "Select",
+   "label": "Ambiente",
+   "options": "Produ\u00e7\u00e3o\nHomologa\u00e7\u00e3o",
+   "reqd": 1
+  },
+  {
+   "fieldname": "data_emissao",
+   "fieldtype": "Date",
+   "label": "Data de Emiss\u00e3o"
+  },
+  {
+   "default": "0",
+   "fieldname": "assincrono",
+   "fieldtype": "Check",
+   "label": "Ass\u00edncrono"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Nota Fiscal",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "informa\u00e7\u00f5es_da_nota_fiscal_tab",
+   "fieldtype": "Tab Break",
+   "label": "Informa\u00e7\u00f5es da Nota Fiscal"
+  },
+  {
+   "fieldname": "informa\u00e7\u00f5es_do_cliente_tab",
+   "fieldtype": "Tab Break",
+   "label": " Informa\u00e7\u00f5es do Cliente"
+  },
+  {
+   "fieldname": "informa\u00e7\u00f5es_do_cliente_section",
+   "fieldtype": "Section Break",
+   "label": " Informa\u00e7\u00f5es do Cliente"
+  },
+  {
+   "fieldname": "cpf",
+   "fieldtype": "Data",
+   "label": "CPF",
+   "length": 11
+  },
+  {
+   "depends_on": "cpf",
+   "fieldname": "nome_completo",
+   "fieldtype": "Data",
+   "label": "Nome Completo",
+   "mandatory_depends_on": "cpf"
+  },
+  {
+   "fieldname": "cnpj",
+   "fieldtype": "Data",
+   "label": "CNPJ",
+   "length": 14
+  },
+  {
+   "depends_on": "cnpj",
+   "fieldname": "razao_social",
+   "fieldtype": "Data",
+   "label": "Raz\u00e3o Social",
+   "mandatory_depends_on": "cnpj"
+  },
+  {
+   "fieldname": "ie",
+   "fieldtype": "Data",
+   "label": "Inscri\u00e7\u00e3o Estadual",
+   "length": 14
+  },
+  {
+   "fieldname": "consumidor_final",
+   "fieldtype": "Select",
+   "label": "Consumidor Final",
+   "options": "Normal\nConsumidor Final"
+  },
+  {
+   "fieldname": "contribuinte",
+   "fieldtype": "Select",
+   "label": "Contribuinte",
+   "options": "Contribuinte ICMS\nContribuinte isento de Inscric\u0327a\u0303o no cadastro de Contribuintes do ICMS\nNa\u0303o Contribuinte, que pode ou na\u0303o possuir Inscric\u0327a\u0303o Estadual no Cadastro de Contribuintes do ICMS."
+  },
+  {
+   "fieldname": "endere\u00e7o_section",
+   "fieldtype": "Section Break",
+   "label": "Endere\u00e7o"
+  },
+  {
+   "fieldname": "link_endereco",
+   "fieldtype": "Link",
+   "label": "Link Endere\u00e7o",
+   "options": "Address"
+  },
+  {
+   "fieldname": "informa\u00e7\u00f5es_dos_produtos_tab",
+   "fieldtype": "Tab Break",
+   "label": "Informa\u00e7\u00f5es dos Produtos"
+  },
+  {
+   "fieldname": "informa\u00e7\u00f5es_do_pedido_tab",
+   "fieldtype": "Tab Break",
+   "label": "Informa\u00e7\u00f5es do Pedido"
+  },
+  {
+   "fieldname": "transporte_tab",
+   "fieldtype": "Tab Break",
+   "label": "Transporte"
+  },
+  {
+   "fieldname": "section_break_wmkr",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-04-05 18:08:56.101876",
+ "modified_by": "Administrator",
+ "module": "NFe NFCe for ERPNext",
+ "name": "Nota Fiscal",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -3,7 +3,7 @@ name = "nfe_nfce_erpnext"
 authors = [
     { name = "shirkit", email = "shirkit@gmail.com"}
 ]
-description = "Library for handling "Nota Fiscal" for brazillian tax compliance."
+description = "Library for handling Nota Fiscal for brazillian tax compliance."
 requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]
