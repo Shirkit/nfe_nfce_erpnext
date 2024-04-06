@@ -1,5 +1,11 @@
 {
- "actions": [],
+ "actions": [
+  {
+   "action": "nfe_nfce_erpnext.api.emitirNotaFiscal",
+   "action_type": "Server Action",
+   "label": "Emitir Nota Fiscal"
+  }
+ ],
  "allow_rename": 1,
  "creation": "2024-04-05 17:11:37.552889",
  "doctype": "DocType",
@@ -188,7 +194,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-04-05 18:08:56.101876",
+ "modified": "2024-04-05 23:02:57.568944",
  "modified_by": "Administrator",
  "module": "NFe NFCe for ERPNext",
  "name": "Nota Fiscal",
