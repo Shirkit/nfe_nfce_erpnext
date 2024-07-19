@@ -4,7 +4,8 @@
 # import frappe
 from frappe.model.document import Document
 
+
 class NotaFiscal(Document):
 
-	def emitirNotaFiscal(self):
-		pass
+    def emitirNotaFiscal(self):
+        pass

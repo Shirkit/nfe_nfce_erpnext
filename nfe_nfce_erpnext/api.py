@@ -1,17 +1,17 @@
-import frappe
-from frappe.utils.file_manager import save_url
-import requests
-import json
-import unidecode
-import re
-import phonenumbers
-from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
-
 import base64
+import json
 import os
+import re
+
+import frappe
+import phonenumbers
+import requests
+import unidecode
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
+from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
+from frappe.utils.file_manager import save_url
 
 tempStates = {
     'Acre': 'AC',

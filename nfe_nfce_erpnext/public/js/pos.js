@@ -30,7 +30,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                     //console.log(r)
                     if (r.message) {
                         parse = JSON.parse(r.message)
-                        console.log(parse)
+                        // console.log(parse)
                         if (parse.html) {
                             parse.html = parse.html.replaceAll("\n", "")
                         }
@@ -58,11 +58,10 @@ frappe.require('point-of-sale.bundle.js', function () {
         bind_events() {
             super.bind_events()
             this.$summary_container.on("click", ".imprimir-btn", () => {
-                console.log("Imprimir NFC-e")
+                // console.log("Imprimir NFC-e")
                 this.events.imprimir_nf(this.doc.name)
             })
-
-            console.log(this.events)
+            // console.log(this.events)
         }
     }
 

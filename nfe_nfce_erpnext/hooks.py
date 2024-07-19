@@ -1,7 +1,7 @@
 app_name = "nfe_nfce_erpnext"
 app_title = "NFe NFCe for ERPNext"
 app_publisher = "shirkit"
-app_description = "Library for handling \"Nota Fiscal\" for brazillian tax compliance."
+app_description = 'Library for handling "Nota Fiscal" for brazillian tax compliance.'
 app_email = "shirkit@gmail.com"
 app_license = "mpl-2.0"
 # required_apps = []
@@ -25,11 +25,19 @@ app_include_js = ["/assets/nfe_nfce_erpnext/js/criarNota.js"]
 # webform_include_css = {"doctype": "public/css/doctype.css"}
 
 # include js in page
-page_js = {"point-of-sale" : "public/js/pos.js"}
+page_js = {"point-of-sale": "public/js/pos.js"}
 
 # include js in doctype views
-doctype_js = {"Sales Invoice" : "/assets/nfe_nfce_erpnext/js/criarNota.js", "POS Invoice" : "/assets/nfe_nfce_erpnext/js/criarNota.js"}
-fixtures = [{"doctype": "Client Script", "filters": [["module" , "in" , ("NFe NFCe for ERPNext" )]]}]
+doctype_js = {
+    "Sales Invoice": "/assets/nfe_nfce_erpnext/js/criarNota.js",
+    "POS Invoice": "/assets/nfe_nfce_erpnext/js/criarNota.js",
+}
+fixtures = [
+    {
+        "doctype": "Client Script",
+        "filters": [["module", "in", ("NFe NFCe for ERPNext")]],
+    }
+]
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -124,10 +132,10 @@ fixtures = [{"doctype": "Client Script", "filters": [["module" , "in" , ("NFe NF
 # Hook on document methods and events
 
 doc_events = {
-	"POS Invoice": {
-		"on_change": "nfe_nfce_erpnext.api.updatePosInvoice",
-		"on_submit": "nfe_nfce_erpnext.api.submitPosInvoice",
-	}
+    "POS Invoice": {
+        "on_change": "nfe_nfce_erpnext.api.updatePosInvoice",
+        "on_submit": "nfe_nfce_erpnext.api.submitPosInvoice",
+    }
 }
 
 # Scheduled Tasks
@@ -226,4 +234,3 @@ doc_events = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-
