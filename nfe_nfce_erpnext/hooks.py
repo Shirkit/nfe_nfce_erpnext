@@ -133,7 +133,7 @@ fixtures = [
 
 doc_events = {
     "POS Invoice": {
-        "on_change": "nfe_nfce_erpnext.api.updatePosInvoice",
+        #"on_change": "nfe_nfce_erpnext.api.updatePosInvoice",
         "on_submit": "nfe_nfce_erpnext.api.submitPosInvoice",
     }
 }
