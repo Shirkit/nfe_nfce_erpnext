@@ -2,3 +2,6 @@ __pycache__/
 nfe_nfce_erpnext/webmania/env.py
 /nfe_nfce_erpnext/webmania
 nfe_nfce_erpnext/nfe_nfce_for_erpnext/doctype/nota_fiscal/env.py
+nfe_nfce_erpnext/env.py
+nfe_nfce_erpnext/key.pem
+nfe_nfce_erpnext/public/cert.pem

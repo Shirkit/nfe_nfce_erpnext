@@ -1,25 +1,26 @@
 {
- "actions": [
-  {
-   "action": "nfe_nfce_erpnext.api.emitirNotaFiscal",
-   "action_type": "Server Action",
-   "label": "Emitir Nota Fiscal"
-  }
- ],
+ "actions": [],
  "allow_rename": 1,
  "creation": "2024-04-05 17:11:37.552889",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "informa\u00e7\u00f5es_da_nota_fiscal_tab",
+  "informa\u00e7\u00f5es_de_emiss\u00e3o_section",
+  "status",
+  "column_break_ggzz",
+  "chave",
   "section_break_skh7",
+  "id",
+  "link",
+  "link_id",
+  "data_emissao",
+  "column_break_hiru",
   "operacao",
   "natureza_operacao",
   "modelo",
   "finalidade",
   "ambiente",
-  "data_emissao",
-  "assincrono",
   "section_break_wmkr",
   "amended_from",
   "informa\u00e7\u00f5es_do_cliente_tab",
@@ -29,13 +30,59 @@
   "cnpj",
   "razao_social",
   "ie",
-  "consumidor_final",
   "contribuinte",
+  "column_break_arzr",
+  "consumidor_final",
+  "email",
+  "telefone",
   "endere\u00e7o_section",
-  "link_endereco",
+  "endereco",
+  "complemento",
+  "numero",
+  "cep",
+  "column_break_wgzg",
+  "bairro",
+  "cidade",
+  "uf",
   "informa\u00e7\u00f5es_dos_produtos_tab",
+  "produtos_section",
+  "produtos",
   "informa\u00e7\u00f5es_do_pedido_tab",
-  "transporte_tab"
+  "pedido_section",
+  "presenca",
+  "modalidade_frete",
+  "frete",
+  "desconto",
+  "informacoes_fisco",
+  "informacoes_complementares",
+  "observacoes_contribuinte",
+  "pagamento_section",
+  "pagamento",
+  "forma_pagamento",
+  "desc_pagamento",
+  "valor_pagamento",
+  "formas_pagamento",
+  "transporte_tab",
+  "entrega_section",
+  "entrega_cpf",
+  "entrega_nome_completo",
+  "entrega_cnpj",
+  "entrega_razao_social",
+  "entrega_ie",
+  "entrega_complemento",
+  "column_break_fuxs",
+  "entrega_endereco",
+  "entrega_numero",
+  "entrega_bairro",
+  "entrega_cidade",
+  "entrega_uf",
+  "entrega_cep",
+  "transporte_section",
+  "volume",
+  "especie",
+  "column_break_mlbf",
+  "peso_bruto",
+  "peso_liquido"
  ],
  "fields": [
   {
@@ -48,13 +95,15 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Opera\u00e7\u00e3o",
-   "options": "Entrada\nSaida",
+   "options": "(1) - Saida",
    "print_hide": 1,
    "reqd": 1
   },
   {
+   "default": "Venda de Mercadoria",
    "fieldname": "natureza_operacao",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Natureza da Opera\u00e7\u00e3o",
    "length": 60,
    "reqd": 1
@@ -62,34 +111,30 @@
   {
    "fieldname": "modelo",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Modelo",
-   "options": "NF-e\nNFC-e",
+   "options": "(1) - NF-e\n(2) - NFC-e",
    "reqd": 1
   },
   {
    "fieldname": "finalidade",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Finalidade",
-   "options": "NF-e normal\nAjuste/Estorno\nDevolu\u00e7\u00e3o",
+   "options": "(1) - NF-e normal",
    "reqd": 1
   },
   {
    "fieldname": "ambiente",
    "fieldtype": "Select",
    "label": "Ambiente",
-   "options": "Produ\u00e7\u00e3o\nHomologa\u00e7\u00e3o",
+   "options": "(0) - Herdar das configura\u00e7\u00f5es\n(1) - Produ\u00e7\u00e3o\n(2) - Homologa\u00e7\u00e3o",
    "reqd": 1
   },
   {
    "fieldname": "data_emissao",
    "fieldtype": "Date",
    "label": "Data de Emiss\u00e3o"
-  },
-  {
-   "default": "0",
-   "fieldname": "assincrono",
-   "fieldtype": "Check",
-   "label": "Ass\u00edncrono"
   },
   {
    "fieldname": "amended_from",
@@ -117,59 +162,60 @@
    "label": " Informa\u00e7\u00f5es do Cliente"
   },
   {
+   "depends_on": "eval:!doc.cnpj",
    "fieldname": "cpf",
    "fieldtype": "Data",
    "label": "CPF",
-   "length": 11
+   "length": 11,
+   "mandatory_depends_on": "eval:!doc.cnpj"
   },
   {
    "depends_on": "cpf",
    "fieldname": "nome_completo",
    "fieldtype": "Data",
    "label": "Nome Completo",
+   "length": 60,
    "mandatory_depends_on": "cpf"
   },
   {
+   "depends_on": "eval:!doc.cpf",
    "fieldname": "cnpj",
    "fieldtype": "Data",
    "label": "CNPJ",
-   "length": 14
+   "length": 14,
+   "mandatory_depends_on": "eval:!doc.cpf"
   },
   {
    "depends_on": "cnpj",
    "fieldname": "razao_social",
    "fieldtype": "Data",
    "label": "Raz\u00e3o Social",
+   "length": 60,
    "mandatory_depends_on": "cnpj"
   },
   {
+   "depends_on": "cnpj",
    "fieldname": "ie",
    "fieldtype": "Data",
    "label": "Inscri\u00e7\u00e3o Estadual",
-   "length": 14
+   "length": 16
   },
   {
    "fieldname": "consumidor_final",
    "fieldtype": "Select",
    "label": "Consumidor Final",
-   "options": "Normal\nConsumidor Final"
+   "options": "(1) - Normal\n(2) - Consumidor Final"
   },
   {
    "fieldname": "contribuinte",
    "fieldtype": "Select",
    "label": "Contribuinte",
-   "options": "Contribuinte ICMS\nContribuinte isento de Inscric\u0327a\u0303o no cadastro de Contribuintes do ICMS\nNa\u0303o Contribuinte, que pode ou na\u0303o possuir Inscric\u0327a\u0303o Estadual no Cadastro de Contribuintes do ICMS."
+   "options": "\n(1) - Contribuinte ICMS\n(2) - Contribuinte isento de Inscric\u0327a\u0303o no cadastro de Contribuintes do ICMS\n(9) - Na\u0303o Contribuinte, que pode ou na\u0303o possuir Inscric\u0327a\u0303o Estadual no Cadastro de Contribuintes do ICMS."
   },
   {
    "fieldname": "endere\u00e7o_section",
    "fieldtype": "Section Break",
    "label": "Endere\u00e7o"
-  },
-  {
-   "fieldname": "link_endereco",
-   "fieldtype": "Link",
-   "label": "Link Endere\u00e7o",
-   "options": "Address"
   },
   {
    "fieldname": "informa\u00e7\u00f5es_dos_produtos_tab",
@@ -182,19 +228,365 @@
    "label": "Informa\u00e7\u00f5es do Pedido"
   },
   {
+   "depends_on": "eval:doc.modalidade_frete != \"(9) - Sem Ocorr\u00eancia de Transporte\"",
    "fieldname": "transporte_tab",
    "fieldtype": "Tab Break",
-   "label": "Transporte"
+   "label": "Transporte e Entrega"
   },
   {
    "fieldname": "section_break_wmkr",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "length": 60
+  },
+  {
+   "fieldname": "telefone",
+   "fieldtype": "Data",
+   "label": "Telefone",
+   "length": 14
+  },
+  {
+   "fieldname": "endereco",
+   "fieldtype": "Data",
+   "label": "Endere\u00e7o",
+   "length": 60
+  },
+  {
+   "fieldname": "complemento",
+   "fieldtype": "Data",
+   "label": "Complemento",
+   "length": 60
+  },
+  {
+   "fieldname": "numero",
+   "fieldtype": "Data",
+   "label": "N\u00famero",
+   "length": 60
+  },
+  {
+   "fieldname": "bairro",
+   "fieldtype": "Data",
+   "label": "Bairro",
+   "length": 60
+  },
+  {
+   "fieldname": "cidade",
+   "fieldtype": "Data",
+   "label": "Cidade",
+   "length": 60
+  },
+  {
+   "fieldname": "uf",
+   "fieldtype": "Select",
+   "label": "Unidade Federativa",
+   "options": "\n(AC) - Acre\n(AL) - Alagoas\n(AP) - Amap\u00e1\n(AM) - Amazonas\n(BA) - Bahia\n(CE) - Cear\u00e1\n(DF) - Distrito Federal\n(ES) - Esp\u00edrito Santo\n(GO) - Goi\u00e1s\n(MA) - Maranh\u00e3o\n(MT) - Mato Grosso\n(MS) - Mato Grosso do Sul\n(MG) - Minas Gerais\n(PA) - Par\u00e1\n(PB) - Para\u00edba\n(PR) - Paran\u00e1\n(PE) - Pernambuco\n(PI) - Piau\u00ed\n(RJ) - Rio de Janeiro\n(RN) - Rio Grande do Norte\n(RS) - Rio Grande do Sul\n(RO) - Rond\u00f4nia\n(RR) - Roraima\n(SC) - Santa Catarina\n(SP) - S\u00e3o Paulo\n(SE) - Sergipe\n(TO) - Tocantins"
+  },
+  {
+   "fieldname": "cep",
+   "fieldtype": "Data",
+   "label": "CEP",
+   "length": 8
+  },
+  {
+   "fieldname": "id",
+   "fieldtype": "Data",
+   "label": "ID",
+   "length": 15
+  },
+  {
+   "fieldname": "produtos_section",
+   "fieldtype": "Section Break",
+   "label": "Produtos"
+  },
+  {
+   "fieldname": "produtos",
+   "fieldtype": "Table",
+   "label": "Produtos",
+   "options": "Produto"
+  },
+  {
+   "fieldname": "pedido_section",
+   "fieldtype": "Section Break",
+   "label": "Pedido"
+  },
+  {
+   "default": "(1) - Opera\u00e7\u00e3o presencial",
+   "fieldname": "presenca",
+   "fieldtype": "Select",
+   "label": "Presen\u00e7a",
+   "options": "(0) - N\u00e3o se aplica (por exemplo, Nota Fiscal complementar ou de ajuste)\n(1) - Opera\u00e7\u00e3o presencial\n(2) - Opera\u00e7\u00e3o n\u00e3o presencial, pela Internet\n(3) - Opera\u00e7\u00e3o n\u00e3o presencial, Teleatendimento\n(4) - NFC-e em opera\u00e7\u00e3o com entrega a domic\u00edlio\n(5) - Opera\u00e7\u00e3o presencial, fora do estabelecimento\n(9) - Opera\u00e7\u00e3o n\u00e3o presencial, outros",
+   "reqd": 1
+  },
+  {
+   "default": "(9) - Sem Ocorr\u00eancia de Transporte",
+   "fieldname": "modalidade_frete",
+   "fieldtype": "Select",
+   "label": "Modalidade de Frete",
+   "options": "(0) - Contrata\u00e7\u00e3o do Frete por conta do Remetente (CIF)\n(1) - Contrata\u00e7\u00e3o do Frete por conta do Destinat\u00e1rio (FOB)\n(2) - Contrata\u00e7\u00e3o do Frete por conta de Terceiros\n(3) - Transporte Pr\u00f3prio por conta do Remetente\n(4) - Transporte Pr\u00f3prio por conta do Destinat\u00e1rio\n(9) - Sem Ocorr\u00eancia de Transporte",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "frete",
+   "fieldtype": "Float",
+   "label": "Frete",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "desconto",
+   "fieldtype": "Float",
+   "label": "Desconto",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "informacoes_fisco",
+   "fieldtype": "Small Text",
+   "label": "Informa\u00e7\u00f5es ao Fisco"
+  },
+  {
+   "fieldname": "informacoes_complementares",
+   "fieldtype": "Small Text",
+   "label": "Informa\u00e7\u00f5es Complementares"
+  },
+  {
+   "fieldname": "observacoes_contribuinte",
+   "fieldtype": "Small Text",
+   "label": "Observa\u00e7\u00f5es Contribuinte"
+  },
+  {
+   "fieldname": "pagamento_section",
+   "fieldtype": "Section Break",
+   "label": "Pagamento"
+  },
+  {
+   "fieldname": "pagamento",
+   "fieldtype": "Select",
+   "label": "Pagamento",
+   "options": "(0) - Pagamento \u00e0 vista\n(1) - Pagamento a prazo",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.formas_pagamento.length == 0",
+   "fieldname": "forma_pagamento",
+   "fieldtype": "Select",
+   "label": "Forma de Pagamento",
+   "mandatory_depends_on": "eval:!doc.formas_pagamento.length",
+   "options": "\n(01) - Dinheiro\n(02) - Cheque\n(03) - Cart\u00e3o de Cr\u00e9dito\n(04) - Cart\u00e3o de D\u00e9bito\n(05) - Cr\u00e9dito Loja\n(10) - Vale Alimenta\u00e7\u00e3o\n(11) - Vale Refei\u00e7\u00e3o\n(12) - Vale Presente\n(13) - Vale Combust\u00edvel\n(14) - Duplicata Mercantil\n(15) - Boleto Banc\u00e1rio\n(16) - Dep\u00f3sito Banc\u00e1rio\n(17) - Pagamento Instant\u00e2neo (PIX)\n(18) - Transfer\u00eancia banc\u00e1ria, Carteira Digital\n(19) - Programa de fidelidade, Cashback, Cr\u00e9dito Virtual\n(90) - Sem pagamento\n(99) - Outros",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval: doc.forma_pagamento==\"(99) - Outros\"",
+   "fieldname": "desc_pagamento",
+   "fieldtype": "Data",
+   "label": "Descri\u00e7\u00e3o de Pagamento",
+   "mandatory_depends_on": "eval:doc.forma_pagamento==\"(99) - Outros\""
+  },
+  {
+   "depends_on": "eval: doc.forma_pagamento",
+   "fieldname": "valor_pagamento",
+   "fieldtype": "Float",
+   "label": "Valor do Pagamento",
+   "mandatory_depends_on": "eval:doc.forma_pagamento==\"(01) - Dinheiro\"",
+   "non_negative": 1,
+   "precision": "2"
+  },
+  {
+   "fieldname": "entrega_section",
+   "fieldtype": "Section Break",
+   "label": "Entrega"
+  },
+  {
+   "depends_on": "eval:!doc.entrega_cnpj",
+   "fieldname": "entrega_cpf",
+   "fieldtype": "Data",
+   "label": "CPF",
+   "length": 11,
+   "mandatory_depends_on": "eval:doc.modalidade_frete != \"(9) - Sem Ocorr\u00eancia de Transporte\" && !doc.entrega_cnpj"
+  },
+  {
+   "depends_on": "entrega_cpf",
+   "fieldname": "entrega_nome_completo",
+   "fieldtype": "Data",
+   "label": "Nome Completo",
+   "length": 60,
+   "mandatory_depends_on": "entrega_cpf"
+  },
+  {
+   "depends_on": "eval:!doc.entrega_cpf",
+   "fieldname": "entrega_cnpj",
+   "fieldtype": "Data",
+   "label": "CNPJ",
+   "length": 14,
+   "mandatory_depends_on": "eval:doc.modalidade_frete!=\"(9) - Sem Ocorr\u00eancia de Transporte\" && !doc.entrega_cpf"
+  },
+  {
+   "depends_on": "entrega_cnpj1",
+   "fieldname": "entrega_razao_social",
+   "fieldtype": "Data",
+   "label": "Raz\u00e3o Social",
+   "length": 60,
+   "mandatory_depends_on": "entrega_cnpj"
+  },
+  {
+   "depends_on": "entrega_cnpj3",
+   "fieldname": "entrega_ie",
+   "fieldtype": "Data",
+   "label": "Inscri\u00e7\u00e3o Estadual ",
+   "length": 14,
+   "mandatory_depends_on": "entrega_cnpj"
+  },
+  {
+   "fieldname": "entrega_endereco",
+   "fieldtype": "Data",
+   "label": "Endere\u00e7o",
+   "length": 60,
+   "mandatory_depends_on": "eval:doc.modalidade_frete!=\"(9) - Sem Ocorr\u00eancia de Transporte\""
+  },
+  {
+   "fieldname": "entrega_complemento",
+   "fieldtype": "Data",
+   "label": "Complemento",
+   "length": 60,
+   "mandatory_depends_on": "eval:doc.modalidade_frete!=\"(9) - Sem Ocorr\u00eancia de Transporte\""
+  },
+  {
+   "fieldname": "entrega_numero",
+   "fieldtype": "Data",
+   "label": "N\u00famero",
+   "length": 60,
+   "mandatory_depends_on": "eval:doc.modalidade_frete!=\"(9) - Sem Ocorr\u00eancia de Transporte\""
+  },
+  {
+   "fieldname": "entrega_bairro",
+   "fieldtype": "Data",
+   "label": "Bairro",
+   "length": 60,
+   "mandatory_depends_on": "eval:doc.modalidade_frete!=\"(9) - Sem Ocorr\u00eancia de Transporte\""
+  },
+  {
+   "fieldname": "entrega_cidade",
+   "fieldtype": "Data",
+   "label": "Cidade",
+   "length": 60,
+   "mandatory_depends_on": "eval:doc.modalidade_frete!=\"(9) - Sem Ocorr\u00eancia de Transporte\""
+  },
+  {
+   "fieldname": "entrega_uf",
+   "fieldtype": "Select",
+   "label": "Unidade Federativa",
+   "mandatory_depends_on": "eval:doc.modalidade_frete!=\"(9) - Sem Ocorr\u00eancia de Transporte\"",
+   "options": "\n(AC) - Acre\n(AL) - Alagoas\n(AP) - Amap\u00e1\n(AM) - Amazonas\n(BA) - Bahia\n(CE) - Cear\u00e1\n(DF) - Distrito Federal\n(ES) - Esp\u00edrito Santo\n(GO) - Goi\u00e1s\n(MA) - Maranh\u00e3o\n(MT) - Mato Grosso\n(MS) - Mato Grosso do Sul\n(MG) - Minas Gerais\n(PA) - Par\u00e1\n(PB) - Para\u00edba\n(PR) - Paran\u00e1\n(PE) - Pernambuco\n(PI) - Piau\u00ed\n(RJ) - Rio de Janeiro\n(RN) - Rio Grande do Norte\n(RS) - Rio Grande do Sul\n(RO) - Rond\u00f4nia\n(RR) - Roraima\n(SC) - Santa Catarina\n(SP) - S\u00e3o Paulo\n(SE) - Sergipe\n(TO) - Tocantins"
+  },
+  {
+   "fieldname": "entrega_cep",
+   "fieldtype": "Data",
+   "label": "CEP",
+   "length": 8,
+   "mandatory_depends_on": "eval:doc.modalidade_frete!=\"(9) - Sem Ocorr\u00eancia de Transporte\""
+  },
+  {
+   "fieldname": "transporte_section",
+   "fieldtype": "Section Break",
+   "label": "Transporte"
+  },
+  {
+   "fieldname": "volume",
+   "fieldtype": "Data",
+   "label": "Volume"
+  },
+  {
+   "fieldname": "especie",
+   "fieldtype": "Data",
+   "label": "Esp\u00e9cie"
+  },
+  {
+   "fieldname": "peso_bruto",
+   "fieldtype": "Data",
+   "label": "Peso Bruto"
+  },
+  {
+   "fieldname": "peso_liquido",
+   "fieldtype": "Data",
+   "label": "Peso L\u00edquido"
+  },
+  {
+   "fieldname": "informa\u00e7\u00f5es_de_emiss\u00e3o_section",
+   "fieldtype": "Section Break",
+   "label": "Informa\u00e7\u00f5es de Emiss\u00e3o"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": " \t  ",
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "label": "Status",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "chave",
+   "fieldtype": "Data",
+   "label": "Chave",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: !doc.forma_pagamento",
+   "fieldname": "formas_pagamento",
+   "fieldtype": "Table",
+   "label": "Formas de Pagamento",
+   "mandatory_depends_on": "eval: !doc.forma_pagamento",
+   "options": "Forma de Pagamento"
+  },
+  {
+   "fieldname": "link",
+   "fieldtype": "Link",
+   "label": "Tipo do Pedido",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "link_id",
+   "fieldtype": "Dynamic Link",
+   "label": "Pedido",
+   "options": "link"
+  },
+  {
+   "fieldname": "column_break_ggzz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hiru",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_arzr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_wgzg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_fuxs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_mlbf",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-04-05 23:02:57.568944",
+ "modified": "2024-07-18 20:29:16.933116",
  "modified_by": "Administrator",
  "module": "NFe NFCe for ERPNext",
  "name": "Nota Fiscal",

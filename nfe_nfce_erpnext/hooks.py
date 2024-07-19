@@ -11,7 +11,7 @@ app_license = "mpl-2.0"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/nfe_nfce_erpnext/css/nfe_nfce_erpnext.css"
-# app_include_js = "/assets/nfe_nfce_erpnext/js/nfe_nfce_erpnext.js"
+app_include_js = ["/assets/nfe_nfce_erpnext/js/criarNota.js"]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/nfe_nfce_erpnext/css/nfe_nfce_erpnext.css"
@@ -25,10 +25,11 @@ app_license = "mpl-2.0"
 # webform_include_css = {"doctype": "public/css/doctype.css"}
 
 # include js in page
-# page_js = {"page" : "public/js/file.js"}
+page_js = {"point-of-sale" : "public/js/pos.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {"Sales Invoice" : "/assets/nfe_nfce_erpnext/js/criarNota.js", "POS Invoice" : "/assets/nfe_nfce_erpnext/js/criarNota.js"}
+fixtures = [{"doctype": "Client Script", "filters": [["module" , "in" , ("NFe NFCe for ERPNext" )]]}]
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -122,13 +123,12 @@ app_license = "mpl-2.0"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"POS Invoice": {
+		"on_change": "nfe_nfce_erpnext.api.updatePosInvoice",
+		"on_submit": "nfe_nfce_erpnext.api.submitPosInvoice",
+	}
+}
 
 # Scheduled Tasks
 # ---------------

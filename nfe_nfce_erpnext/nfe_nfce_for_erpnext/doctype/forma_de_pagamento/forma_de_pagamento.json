@@ -1,0 +1,43 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-17 12:19:38.240781",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "forma_pagamento",
+  "valor_pagamento"
+ ],
+ "fields": [
+  {
+   "fieldname": "forma_pagamento",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Forma de Pagamento",
+   "options": "(01) - Dinheiro\n(02) - Cheque\n(03) - Cart\u00e3o de Cr\u00e9dito\n(04) - Cart\u00e3o de D\u00e9bito\n(05) - Cr\u00e9dito Loja\n(10) - Vale Alimenta\u00e7\u00e3o\n(11) - Vale Refei\u00e7\u00e3o\n(12) - Vale Presente\n(13) - Vale Combust\u00edvel\n(14) - Duplicata Mercantil\n(15) - Boleto Banc\u00e1rio\n(16) - Dep\u00f3sito Banc\u00e1rio\n(17) - Pagamento Instant\u00e2neo (PIX)\n(18) - Transfer\u00eancia banc\u00e1ria, Carteira Digital\n(19) - Programa de fidelidade, Cashback, Cr\u00e9dito Virtual\n(90) - Sem pagamento\n(99) - Outros",
+   "reqd": 1
+  },
+  {
+   "fieldname": "valor_pagamento",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Valor do Pagamento",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-04-17 12:25:48.602983",
+ "modified_by": "Administrator",
+ "module": "NFe NFCe for ERPNext",
+ "name": "Forma de Pagamento",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
