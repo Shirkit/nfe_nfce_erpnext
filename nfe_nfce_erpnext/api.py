@@ -357,11 +357,21 @@ def criarNotaFiscal(*args, **kwargs):
     insert = kwargs.get("insert") if kwargs.get("insert") is not None else False
     submit = kwargs.get("submit") if kwargs.get("submit") is not None else False
     modelo = kwargs.get("modelo") if kwargs.get("modelo") is not None else 2
+    if isinstance(modelo, str):
+        modelo = int(modelo)
 
     server_doc = None
     # TODO migrar para apenas server_doc para conferência do pedido
     if kwargs.get("server_pos_invoice") is not None:
-        server_doc = frappe.get_doc("POS Invoice", kwargs["server_pos_invoice"].name)
+        if isinstance(kwargs["server_pos_invoice"], str):
+            server_doc = frappe.get_doc("POS Invoice", kwargs["server_pos_invoice"])
+        else:
+            server_doc = frappe.get_doc("POS Invoice", kwargs["server_pos_invoice"].name)
+    elif kwargs.get("server_invoice") is not None:
+        if isinstance(kwargs["server_invoice"], str):
+            server_doc = frappe.get_doc("Sales Invoice", kwargs["server_invoice"])
+        else:
+            server_doc = frappe.get_doc("Sales Invoice", kwargs["server_invoice"].name)
     else:
         frappe.throw(
             title="Pedido não encontrado",
@@ -399,8 +409,6 @@ def criarNotaFiscal(*args, **kwargs):
         "Customer", customer.name, linkinfo=get_linked_doctypes("Customer")
     )
 
-    contacts = linked.get("Contact")
-
     if customer.tax_id is not None:
         if customer.customer_type == "Company":
             nota.cnpj = re.sub("\D", "", customer.tax_id)
@@ -411,6 +419,8 @@ def criarNotaFiscal(*args, **kwargs):
             nota.nome_completo = customer.customer_name
 
     # TODO calcular "Consumidor Final" e "Contribuinte"
+
+    contacts = linked.get("Contact")
 
     if customer.customer_primary_address is not None:
         primary_address = frappe.get_doc("Address", customer.customer_primary_address)
@@ -430,14 +440,16 @@ def criarNotaFiscal(*args, **kwargs):
             else nota.telefone + "," + primary_contact.phone
         )
 
-    # if server_doc.customer_address is not None:
-    #     address = frappe.get_doc("Address", server_doc.customer_address)
-    #     addresses = linked.get("Address")
-    #     if address is not None:
-    #         pass
+    print(modelo)
+    print(server_doc.customer_address)
+    addresses = linked.get("Address")
+    print(addresses)
 
-    if modelo == 1:
+    if modelo == 1 or modelo == "1":
         for address in addresses:
+            print(address)
+            print(address.address_type)
+            print(address.city)
             address = frappe.get_doc("Address", address.name)
             if address.address_type == "Billing":
                 if (

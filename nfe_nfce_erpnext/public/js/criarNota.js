@@ -8,7 +8,8 @@ frappe.ui.form.on("Sales Invoice", {
                 method: "nfe_nfce_erpnext.api.criarNotaFiscal",
 
                 args: {
-                    "server_pos_invoice": frm.doc.name
+                    "server_invoice": frm.doc.name,
+                    "modelo": 1
                 },
                 callback: function (r) {
                     console.log(r)
@@ -26,13 +27,14 @@ frappe.ui.form.on("POS Invoice", {
 
     timeline_refresh: function (frm) {
         // create button for "Add to Knowledge Base"
-        frm.add_custom_button(__('Criar NF-e'), function () {
+        frm.add_custom_button(__('Criar NFC-e'), function () {
             frappe.call({
                 type: "GET",
                 method: "nfe_nfce_erpnext.api.criarNotaFiscal",
 
                 args: {
-                    "server_pos_invoice": frm.doc.name
+                    "server_pos_invoice": frm.doc.name,
+                    "modelo": 2
                 },
                 callback: function (r) {
                     console.log(r)
