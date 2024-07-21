@@ -53,6 +53,11 @@ for state, sigla in tempStates.items():
     states[unidecode.unidecode(state.upper())] = sigla
     states[unidecode.unidecode(state.lower())] = sigla
 
+def loadField(name, loaded_json):
+    field = loaded_json.get(name)
+    if field is not None:
+        return " ".join(str(field).strip().split()).upper()
+    return None
 
 def selectOption(toSelect, options):
     for option in options:
@@ -66,6 +71,22 @@ def parseOption(option):
         return option[option.find("(") + 1 : option.find(")")]
     return option
 
+def webmaniaSettings():
+    settings = frappe.get_doc("Nota Fiscal Settings")
+    obj = {
+        "headers": {
+            "cache-control": "no-cache",
+            "content-type": "application/json",
+            "x-consumer-key": settings.get_password("webmania_consumer_key"),
+            "x-consumer-secret": settings.get_password("webmania_consumer_secret"),
+            "x-access-token": settings.get_password("webmania_access_token"),
+            "x-access-token-secret": settings.get_password(
+                "webmania_access_token_secret"
+            ),
+        },
+        "ambiente": parseOption(settings.webmania_ambiente),
+    }
+    return obj
 
 @frappe.whitelist()
 def signQz(message):
@@ -279,6 +300,8 @@ def emitirNotaFiscal(*args, **kwargs):
 def imprimirNotaFiscal(*args, **kwargs):
     server_doc = None
 
+    print(kwargs)
+
     if kwargs.get("server_pos_invoice") is not None:
         server_doc = frappe.get_doc("POS Invoice", kwargs["server_pos_invoice"])
     else:
@@ -289,6 +312,9 @@ def imprimirNotaFiscal(*args, **kwargs):
         return json.dumps(
             {"error": "Um pedido precisa existir antes de imprimir uma Nota fiscal."}
         )
+
+    print(server_doc.as_dict())
+    print(server_doc.nf_ultima_nota)
 
     if server_doc.nf_ultima_nota is None:
         frappe.throw(
@@ -532,21 +558,23 @@ def criarNotaFiscal(*args, **kwargs):
     nota.link_id = server_doc.name
     nota.link = server_doc.doctype
 
-    if insert:
-        if server_doc is not None:
-            server_doc.db_set("nf_ultima_nota", nota.name, notify=True)
-            server_doc.notify_update()
-            server_doc.save()
+    if parseOption(nota.ambiente) == "0":
+        nota.ambiente = selectOption(
+            webmaniaSettings()["ambiente"],
+            frappe.get_meta("Nota Fiscal Settings")
+            .get_field("webmania_ambiente")
+            .options.split("\n"),
+        )
+
+    if insert and server_doc is not None:
+        print("Inserting")
+        nota.insert()
+        nota.save()
         frappe.db.commit()
+        server_doc.db_set("nf_ultima_nota", nota.name, notify=True, commit=True)
+        #server_doc.save()
 
     if submit:
-        if parseOption(nota.ambiente) == "0":
-            nota.ambiente = selectOption(
-                webmaniaSettings()["ambiente"],
-                frappe.get_meta("Nota Fiscal Settings")
-                .get_field("webmania_ambiente")
-                .options.split("\n"),
-            )
         nota.submit()
         frappe.db.commit()
 
@@ -572,13 +600,6 @@ def criarNotaFiscal(*args, **kwargs):
     # cnpj / nome / ie / cpf / nome_completo / uf / cep / endereco / numero / complemento / bairro / cidade / telefone / email
 
     # print(result)
-
-
-def loadField(name, loaded_json):
-    field = loaded_json.get(name)
-    if field is not None:
-        return " ".join(str(field).strip().split()).upper()
-    return None
 
 
 @frappe.whitelist()
@@ -664,26 +685,7 @@ def puxarDadosCNPJ(*args, **kwargs):
 def updatePosInvoice(doc, method=None):
     return
 
-
 def submitPosInvoice(doc, method=None):
     nota = criarNotaFiscal(server_pos_invoice=doc, insert=True, submit=True, modelo=2)
     emitida = emitirNotaFiscal(nota=nota)
     return
-
-
-def webmaniaSettings():
-    settings = frappe.get_doc("Nota Fiscal Settings")
-    obj = {
-        "headers": {
-            "cache-control": "no-cache",
-            "content-type": "application/json",
-            "x-consumer-key": settings.get_password("webmania_consumer_key"),
-            "x-consumer-secret": settings.get_password("webmania_consumer_secret"),
-            "x-access-token": settings.get_password("webmania_access_token"),
-            "x-access-token-secret": settings.get_password(
-                "webmania_access_token_secret"
-            ),
-        },
-        "ambiente": parseOption(settings.webmania_ambiente),
-    }
-    return obj
