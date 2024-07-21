@@ -206,9 +206,16 @@ def emitirNotaFiscal(*args, **kwargs):
     pedido["observacoes_contribuinte"] = nota_db.observacoes_contribuinte
 
     pedido["pagamento"] = parseOption(nota_db.pagamento)
-    pedido["forma_pagamento"] = parseOption(nota_db.forma_pagamento)
     pedido["desc_pagamento"] = nota_db.desc_pagamento
-    pedido["valor_pagamento"] = nota_db.valor_pagamento
+    if nota_db.formas_pagamento is not None and len(nota_db.formas_pagamento) > 0:
+        pedido["forma_pagamento"] = []
+        pedido["valor_pagamento"] = []
+        for forma in nota_db.formas_pagamento:
+            pedido["forma_pagamento"].append(parseOption(forma.forma_pagamento))
+            pedido["valor_pagamento"].append(forma.valor_pagamento)
+    else:
+        pedido["forma_pagamento"] = parseOption(nota_db.forma_pagamento)
+        pedido["valor_pagamento"] = nota_db.valor_pagamento
 
     transporte = {}
     transporte["volume"] = nota_db.volume
@@ -300,8 +307,6 @@ def emitirNotaFiscal(*args, **kwargs):
 def imprimirNotaFiscal(*args, **kwargs):
     server_doc = None
 
-    print(kwargs)
-
     if kwargs.get("server_pos_invoice") is not None:
         server_doc = frappe.get_doc("POS Invoice", kwargs["server_pos_invoice"])
     else:
@@ -312,9 +317,6 @@ def imprimirNotaFiscal(*args, **kwargs):
         return json.dumps(
             {"error": "Um pedido precisa existir antes de imprimir uma Nota fiscal."}
         )
-
-    print(server_doc.as_dict())
-    print(server_doc.nf_ultima_nota)
 
     if server_doc.nf_ultima_nota is None:
         frappe.throw(
@@ -545,7 +547,6 @@ def criarNotaFiscal(*args, **kwargs):
             forma.forma_pagamento = nota.forma_pagamento
             forma.valor_pagamento = nota.valor_pagamento
             nota.formas_pagamento.append(forma)
-
             nota.forma_pagamento = None
             nota.valor_pagamento = None
         else:
