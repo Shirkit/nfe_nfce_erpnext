@@ -702,3 +702,14 @@ def submitPosInvoice(doc, method=None):
     nota = criarNotaFiscal(server_pos_invoice=doc, insert=True, submit=True, modelo=2)
     emitida = emitirNotaFiscal(nota=nota)
     return
+
+def beforeInsertLoyaltyPointEntry(doc, method=None):
+    if doc is not None:
+        invoice = frappe.get_cached_doc(doc.invoice_type, doc.invoice)
+        program = frappe.get_cached_doc("Loyalty Program", doc.loyalty_program)
+        if program is not None and program is not None:
+            for payment in program.mode_of_payment_multiplier:
+                for invoice_payment in invoice.payments:
+                    if payment.mode_of_payment == invoice_payment.mode_of_payment:
+                        doc.loyalty_points += invoice_payment.amount * payment.amount / program.conversion_factor
+    return
