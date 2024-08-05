@@ -1,46 +1,57 @@
 [
-    {
-        "docstatus": 0,
-        "doctype": "Client Script",
-        "dt": "Item",
-        "enabled": 1,
-        "modified": "2024-04-09 12:10:38.118582",
-        "module": "NFe NFCe for ERPNext",
-        "name": "Mascara NCM",
-        "script": "frappe.ui.form.on('Item', {\n\tvalidate(frm) {\n\t    var ncm = frm.fields_dict.nf_ncm.get_value();\n\t    if (ncm) {\n\t        frm.fields_dict.nf_ncm.set_value(formataNCM(ncm));\n\t        if (frm.fields_dict.nf_ncm.get_value().length > 10) {\n\t            msgprint('Código NCM Inválido');\n\t            frappe.validated = false;\n\t        }\n\t    }\n\t}\n})\n\nfunction formataNCM(ncm){\n    return ncm.replace(/[^\\d]/g, \"\").replace(/(\\d{4})(\\d{2})(\\d{2})/, \"$1.$2.$3\");\n}",
-        "view": "Form"
-    },
-    {
-        "docstatus": 0,
-        "doctype": "Client Script",
-        "dt": "Contact",
-        "enabled": 1,
-        "modified": "2024-04-06 12:55:57.149605",
-        "module": "NFe NFCe for ERPNext",
-        "name": "Mascara de Telefone",
-        "script": "let mask;\n\njQuery.getScript(\"https://unpkg.com/imask\", () => {\n    mask = IMask.createMask({\n        mask: \"+55 00 0000[0]-0000\"\n    })\n})\n\nfrappe.ui.form.on('Contact', {\n\tvalidate(frm) {\n\t    window.shirkit = frm;\n\t    console.log(1);\n\t    if (frm.fields_dict.phone_nos.grid.grid_rows) {\n\t        console.log(2);\n\t        frm.fields_dict.phone_nos.grid.grid_rows.forEach((el) => {\n\t            console.log(3);\n\t            mask.resolve(el.doc.phone);\n\t            el.doc.phone = mask.value;\n\t            el.refresh_field(\"phone\");\n\t        })\n\t    }\n\t}\n})\n",
-        "view": "Form"
-    },
-    {
-        "docstatus": 0,
-        "doctype": "Client Script",
-        "dt": "Supplier",
-        "enabled": 1,
-        "modified": "2024-04-06 12:56:24.486076",
-        "module": "NFe NFCe for ERPNext",
-        "name": "CNPJ/CPF Format e Validate",
-        "script": "frappe.ui.form.on('Supplier', {\n\tvalidate(frm) {\n\t    if (frm.doc.country?.toLowerCase() !== \"brazil\")\n\t        return;\n\t   \n\t    var tax = frm.fields_dict.tax_id.get_value();\n\t    if (tax) {\n\t        if (validarCPF(tax))\n\t            frm.fields_dict.tax_id.set_value(formataCPF(tax));\n\t        else if (validarCNPJ(tax))\n\t            frm.fields_dict.tax_id.set_value(formataCNPJ(tax));\n\t        else {\n\t            msgprint('CPF/CNPJ Inválido');\n\t            frappe.validated = false;\n\t        }\n\t    }\n\t}\n})\n\nfunction formataCPF(cpf){\n    cpf = cpf.replace(/[^\\d]/g, \"\");\n    return cpf.replace(/(\\d{3})(\\d{3})(\\d{3})(\\d{2})/, \"$1.$2.$3-$4\");\n}\n\nfunction formataCNPJ(str){\n    str = str.replace(/[^\\d]/g, \"\");\n    return str.replace(/(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})/, \"$1.$2.$3/$4-$5\");\n}\n\nfunction validarCNPJ(cnpj) {\n \n    cnpj = cnpj.replace(/[^\\d]+/g,'');\n \n    if(cnpj == '' || cnpj.length != 14) return false;\n         \n    // Valida DVs\n    tamanho = cnpj.length - 2\n    numeros = cnpj.substring(0,tamanho);\n    digitos = cnpj.substring(tamanho);\n    soma = 0;\n    pos = tamanho - 7;\n    for (i = tamanho; i >= 1; i--) {\n      soma += numeros.charAt(tamanho - i) * pos--;\n      if (pos < 2)\n            pos = 9;\n    }\n    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;\n    if (resultado != digitos.charAt(0))\n        return false;\n         \n    tamanho = tamanho + 1;\n    numeros = cnpj.substring(0,tamanho);\n    soma = 0;\n    pos = tamanho - 7;\n    for (i = tamanho; i >= 1; i--) {\n      soma += numeros.charAt(tamanho - i) * pos--;\n      if (pos < 2)\n            pos = 9;\n    }\n    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;\n    if (resultado != digitos.charAt(1))\n          return false;\n           \n    return true;\n    \n}\n\nfunction validarCPF(cpf) {\t\n\tcpf = cpf.replace(/[^\\d]+/g,'');\t\n\tif(cpf == '' || cpf.length != 11) return false;\t\n\t// Valida 1o digito\t\n\tadd = 0;\t\n\tfor (i=0; i < 9; i ++)\t\t\n\t\tadd += parseInt(cpf.charAt(i)) * (10 - i);\t\n\t\trev = 11 - (add % 11);\t\n\t\tif (rev == 10 || rev == 11)\t\t\n\t\t\trev = 0;\t\n\t\tif (rev != parseInt(cpf.charAt(9)))\t\t\n\t\t\treturn false;\t\t\n\t// Valida 2o digito\t\n\tadd = 0;\t\n\tfor (i = 0; i < 10; i ++)\t\t\n\t\tadd += parseInt(cpf.charAt(i)) * (11 - i);\t\n\trev = 11 - (add % 11);\t\n\tif (rev == 10 || rev == 11)\t\n\t\trev = 0;\t\n\tif (rev != parseInt(cpf.charAt(10)))\n\t\treturn false;\t\t\n\treturn true;   \n}",
-        "view": "Form"
-    },
-    {
-        "docstatus": 0,
-        "doctype": "Client Script",
-        "dt": "Customer",
-        "enabled": 1,
-        "modified": "2024-04-07 11:59:41.608688",
-        "module": "NFe NFCe for ERPNext",
-        "name": "CNPJ/CPF Format e Validate E",
-        "script": "frappe.ui.form.on('Customer', {\n\tvalidate(frm) {\n\t    var tax = frm.fields_dict.tax_id.get_value();\n\t    if (tax) {\n\t        if (validarCPF(tax))\n\t            frm.fields_dict.tax_id.set_value(formataCPF(tax));\n\t        else if (validarCNPJ(tax))\n\t            frm.fields_dict.tax_id.set_value(formataCNPJ(tax));\n\t        else {\n\t            msgprint('CPF/CNPJ Inválido');\n\t            frappe.validated = false;\n\t        }\n\t    }\n\t}\n})\n\nfunction formataCPF(cpf){\n    cpf = cpf.replace(/[^\\d]/g, \"\");\n    return cpf.replace(/(\\d{3})(\\d{3})(\\d{3})(\\d{2})/, \"$1.$2.$3-$4\");\n}\n\nfunction formataCNPJ(str){\n    str = str.replace(/[^\\d]/g, \"\");\n    return str.replace(/(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})/, \"$1.$2.$3/$4-$5\");\n}\n\nfunction validarCNPJ(cnpj) {\n \n    cnpj = cnpj.replace(/[^\\d]+/g,'');\n \n    if(cnpj == '' || cnpj.length != 14) return false;\n         \n    // Valida DVs\n    tamanho = cnpj.length - 2\n    numeros = cnpj.substring(0,tamanho);\n    digitos = cnpj.substring(tamanho);\n    soma = 0;\n    pos = tamanho - 7;\n    for (i = tamanho; i >= 1; i--) {\n      soma += numeros.charAt(tamanho - i) * pos--;\n      if (pos < 2)\n            pos = 9;\n    }\n    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;\n    if (resultado != digitos.charAt(0))\n        return false;\n         \n    tamanho = tamanho + 1;\n    numeros = cnpj.substring(0,tamanho);\n    soma = 0;\n    pos = tamanho - 7;\n    for (i = tamanho; i >= 1; i--) {\n      soma += numeros.charAt(tamanho - i) * pos--;\n      if (pos < 2)\n            pos = 9;\n    }\n    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;\n    if (resultado != digitos.charAt(1))\n          return false;\n           \n    return true;\n    \n}\n\nfunction validarCPF(cpf) {\t\n\tcpf = cpf.replace(/[^\\d]+/g,'');\t\n\tif(cpf == '' || cpf.length != 11) return false;\t\n\t// Valida 1o digito\t\n\tadd = 0;\t\n\tfor (i=0; i < 9; i ++)\t\t\n\t\tadd += parseInt(cpf.charAt(i)) * (10 - i);\t\n\t\trev = 11 - (add % 11);\t\n\t\tif (rev == 10 || rev == 11)\t\t\n\t\t\trev = 0;\t\n\t\tif (rev != parseInt(cpf.charAt(9)))\t\t\n\t\t\treturn false;\t\t\n\t// Valida 2o digito\t\n\tadd = 0;\t\n\tfor (i = 0; i < 10; i ++)\t\t\n\t\tadd += parseInt(cpf.charAt(i)) * (11 - i);\t\n\trev = 11 - (add % 11);\t\n\tif (rev == 10 || rev == 11)\t\n\t\trev = 0;\t\n\tif (rev != parseInt(cpf.charAt(10)))\n\t\treturn false;\t\t\n\treturn true;   \n}",
-        "view": "Form"
-    }
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Address",
+  "enabled": 1,
+  "modified": "2024-07-21 09:48:22.650253",
+  "module": "NFe NFCe for ERPNext",
+  "name": "Mascara de Telefone Address",
+  "script": "let mask;\n\njQuery.getScript(\"https://unpkg.com/imask\", () => {\n    mask = IMask.createMask({\n        mask: \"+55 00 0000[0]-0000\"\n    })\n})\n\nfrappe.ui.form.on('Address', {\n\tvalidate(frm) {\n\t    window.shirkit = frm;\n\t    console.log(1);\n        mask.resolve(frm.doc.phone);\n        frm.doc.phone = mask.value;\n        frm.refresh_field(\"phone\");\n\t}\n})\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Item",
+  "enabled": 1,
+  "modified": "2024-04-09 12:10:38.118582",
+  "module": "NFe NFCe for ERPNext",
+  "name": "Mascara NCM",
+  "script": "frappe.ui.form.on('Item', {\n\tvalidate(frm) {\n\t    var ncm = frm.fields_dict.nf_ncm.get_value();\n\t    if (ncm) {\n\t        frm.fields_dict.nf_ncm.set_value(formataNCM(ncm));\n\t        if (frm.fields_dict.nf_ncm.get_value().length > 10) {\n\t            msgprint('Código NCM Inválido');\n\t            frappe.validated = false;\n\t        }\n\t    }\n\t}\n})\n\nfunction formataNCM(ncm){\n    return ncm.replace(/[^\\d]/g, \"\").replace(/(\\d{4})(\\d{2})(\\d{2})/, \"$1.$2.$3\");\n}",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Contact",
+  "enabled": 1,
+  "modified": "2024-04-06 12:55:57.149605",
+  "module": "NFe NFCe for ERPNext",
+  "name": "Mascara de Telefone",
+  "script": "let mask;\n\njQuery.getScript(\"https://unpkg.com/imask\", () => {\n    mask = IMask.createMask({\n        mask: \"+55 00 0000[0]-0000\"\n    })\n})\n\nfrappe.ui.form.on('Contact', {\n\tvalidate(frm) {\n\t    window.shirkit = frm;\n\t    console.log(1);\n\t    if (frm.fields_dict.phone_nos.grid.grid_rows) {\n\t        console.log(2);\n\t        frm.fields_dict.phone_nos.grid.grid_rows.forEach((el) => {\n\t            console.log(3);\n\t            mask.resolve(el.doc.phone);\n\t            el.doc.phone = mask.value;\n\t            el.refresh_field(\"phone\");\n\t        })\n\t    }\n\t}\n})\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Supplier",
+  "enabled": 1,
+  "modified": "2024-04-06 12:56:24.486076",
+  "module": "NFe NFCe for ERPNext",
+  "name": "CNPJ/CPF Format e Validate",
+  "script": "frappe.ui.form.on('Supplier', {\n\tvalidate(frm) {\n\t    if (frm.doc.country?.toLowerCase() !== \"brazil\")\n\t        return;\n\t   \n\t    var tax = frm.fields_dict.tax_id.get_value();\n\t    if (tax) {\n\t        if (validarCPF(tax))\n\t            frm.fields_dict.tax_id.set_value(formataCPF(tax));\n\t        else if (validarCNPJ(tax))\n\t            frm.fields_dict.tax_id.set_value(formataCNPJ(tax));\n\t        else {\n\t            msgprint('CPF/CNPJ Inválido');\n\t            frappe.validated = false;\n\t        }\n\t    }\n\t}\n})\n\nfunction formataCPF(cpf){\n    cpf = cpf.replace(/[^\\d]/g, \"\");\n    return cpf.replace(/(\\d{3})(\\d{3})(\\d{3})(\\d{2})/, \"$1.$2.$3-$4\");\n}\n\nfunction formataCNPJ(str){\n    str = str.replace(/[^\\d]/g, \"\");\n    return str.replace(/(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})/, \"$1.$2.$3/$4-$5\");\n}\n\nfunction validarCNPJ(cnpj) {\n \n    cnpj = cnpj.replace(/[^\\d]+/g,'');\n \n    if(cnpj == '' || cnpj.length != 14) return false;\n         \n    // Valida DVs\n    tamanho = cnpj.length - 2\n    numeros = cnpj.substring(0,tamanho);\n    digitos = cnpj.substring(tamanho);\n    soma = 0;\n    pos = tamanho - 7;\n    for (i = tamanho; i >= 1; i--) {\n      soma += numeros.charAt(tamanho - i) * pos--;\n      if (pos < 2)\n            pos = 9;\n    }\n    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;\n    if (resultado != digitos.charAt(0))\n        return false;\n         \n    tamanho = tamanho + 1;\n    numeros = cnpj.substring(0,tamanho);\n    soma = 0;\n    pos = tamanho - 7;\n    for (i = tamanho; i >= 1; i--) {\n      soma += numeros.charAt(tamanho - i) * pos--;\n      if (pos < 2)\n            pos = 9;\n    }\n    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;\n    if (resultado != digitos.charAt(1))\n          return false;\n           \n    return true;\n    \n}\n\nfunction validarCPF(cpf) {\t\n\tcpf = cpf.replace(/[^\\d]+/g,'');\t\n\tif(cpf == '' || cpf.length != 11) return false;\t\n\t// Valida 1o digito\t\n\tadd = 0;\t\n\tfor (i=0; i < 9; i ++)\t\t\n\t\tadd += parseInt(cpf.charAt(i)) * (10 - i);\t\n\t\trev = 11 - (add % 11);\t\n\t\tif (rev == 10 || rev == 11)\t\t\n\t\t\trev = 0;\t\n\t\tif (rev != parseInt(cpf.charAt(9)))\t\t\n\t\t\treturn false;\t\t\n\t// Valida 2o digito\t\n\tadd = 0;\t\n\tfor (i = 0; i < 10; i ++)\t\t\n\t\tadd += parseInt(cpf.charAt(i)) * (11 - i);\t\n\trev = 11 - (add % 11);\t\n\tif (rev == 10 || rev == 11)\t\n\t\trev = 0;\t\n\tif (rev != parseInt(cpf.charAt(10)))\n\t\treturn false;\t\t\n\treturn true;   \n}",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Customer",
+  "enabled": 1,
+  "modified": "2024-04-07 11:59:41.608688",
+  "module": "NFe NFCe for ERPNext",
+  "name": "CNPJ/CPF Format e Validate E",
+  "script": "frappe.ui.form.on('Customer', {\n\tvalidate(frm) {\n\t    var tax = frm.fields_dict.tax_id.get_value();\n\t    if (tax) {\n\t        if (validarCPF(tax))\n\t            frm.fields_dict.tax_id.set_value(formataCPF(tax));\n\t        else if (validarCNPJ(tax))\n\t            frm.fields_dict.tax_id.set_value(formataCNPJ(tax));\n\t        else {\n\t            msgprint('CPF/CNPJ Inválido');\n\t            frappe.validated = false;\n\t        }\n\t    }\n\t}\n})\n\nfunction formataCPF(cpf){\n    cpf = cpf.replace(/[^\\d]/g, \"\");\n    return cpf.replace(/(\\d{3})(\\d{3})(\\d{3})(\\d{2})/, \"$1.$2.$3-$4\");\n}\n\nfunction formataCNPJ(str){\n    str = str.replace(/[^\\d]/g, \"\");\n    return str.replace(/(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})/, \"$1.$2.$3/$4-$5\");\n}\n\nfunction validarCNPJ(cnpj) {\n \n    cnpj = cnpj.replace(/[^\\d]+/g,'');\n \n    if(cnpj == '' || cnpj.length != 14) return false;\n         \n    // Valida DVs\n    tamanho = cnpj.length - 2\n    numeros = cnpj.substring(0,tamanho);\n    digitos = cnpj.substring(tamanho);\n    soma = 0;\n    pos = tamanho - 7;\n    for (i = tamanho; i >= 1; i--) {\n      soma += numeros.charAt(tamanho - i) * pos--;\n      if (pos < 2)\n            pos = 9;\n    }\n    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;\n    if (resultado != digitos.charAt(0))\n        return false;\n         \n    tamanho = tamanho + 1;\n    numeros = cnpj.substring(0,tamanho);\n    soma = 0;\n    pos = tamanho - 7;\n    for (i = tamanho; i >= 1; i--) {\n      soma += numeros.charAt(tamanho - i) * pos--;\n      if (pos < 2)\n            pos = 9;\n    }\n    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;\n    if (resultado != digitos.charAt(1))\n          return false;\n           \n    return true;\n    \n}\n\nfunction validarCPF(cpf) {\t\n\tcpf = cpf.replace(/[^\\d]+/g,'');\t\n\tif(cpf == '' || cpf.length != 11) return false;\t\n\t// Valida 1o digito\t\n\tadd = 0;\t\n\tfor (i=0; i < 9; i ++)\t\t\n\t\tadd += parseInt(cpf.charAt(i)) * (10 - i);\t\n\t\trev = 11 - (add % 11);\t\n\t\tif (rev == 10 || rev == 11)\t\t\n\t\t\trev = 0;\t\n\t\tif (rev != parseInt(cpf.charAt(9)))\t\t\n\t\t\treturn false;\t\t\n\t// Valida 2o digito\t\n\tadd = 0;\t\n\tfor (i = 0; i < 10; i ++)\t\t\n\t\tadd += parseInt(cpf.charAt(i)) * (11 - i);\t\n\trev = 11 - (add % 11);\t\n\tif (rev == 10 || rev == 11)\t\n\t\trev = 0;\t\n\tif (rev != parseInt(cpf.charAt(10)))\n\t\treturn false;\t\t\n\treturn true;   \n}",
+  "view": "Form"
+ }
 ]

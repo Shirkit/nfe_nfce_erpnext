@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-18 17:23:27.833520",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "webmania_section",
+  "webmania_ambiente",
+  "webmania_consumer_key",
+  "webmania_consumer_secret",
+  "webmania_access_token",
+  "webmania_access_token_secret"
+ ],
+ "fields": [
+  {
+   "fieldname": "webmania_section",
+   "fieldtype": "Section Break",
+   "label": "WebMania"
+  },
+  {
+   "default": "(2) - Homologa\u00e7\u00e3o",
+   "fieldname": "webmania_ambiente",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Ambiente",
+   "options": "(1) - Produ\u00e7\u00e3o\n(2) - Homologa\u00e7\u00e3o",
+   "reqd": 1
+  },
+  {
+   "fieldname": "webmania_consumer_key",
+   "fieldtype": "Password",
+   "label": "Consumer Key"
+  },
+  {
+   "fieldname": "webmania_consumer_secret",
+   "fieldtype": "Password",
+   "label": "Consumer Secret"
+  },
+  {
+   "fieldname": "webmania_access_token",
+   "fieldtype": "Password",
+   "label": "Access Token"
+  },
+  {
+   "fieldname": "webmania_access_token_secret",
+   "fieldtype": "Password",
+   "label": "Access Token Secret"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-08-05 15:59:11.223141",
+ "modified_by": "Administrator",
+ "module": "NFe NFCe for ERPNext",
+ "name": "Nota Fiscal Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
