@@ -660,7 +660,7 @@ def puxarDadosCNPJ(*args, **kwargs):
         if len(inscricoes_estaduais) == 1:
             inscricao_estadual = inscricoes_estaduais[0].get("inscricao_estadual")
 
-        customer = frappe.get_doc("Customer", nota_db.name)
+        customer = frappe.get_doc("Customer", loaded_json.get("name"))
 
         customer.nf_razao_social = razao_social
         customer.nf_inscricao_estadual = inscricao_estadual
