@@ -138,6 +138,9 @@ doc_events = {
     },
     "Loyalty Point Entry": {
         "before_insert": "nfe_nfce_erpnext.api.beforeInsertLoyaltyPointEntry",
+    },
+    "Item Price": {
+        "after_insert": "nfe_nfce_erpnext.api.afterSaveItemPrice",
     }
 }
 

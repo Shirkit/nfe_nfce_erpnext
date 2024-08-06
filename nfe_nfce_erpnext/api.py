@@ -713,3 +713,27 @@ def beforeInsertLoyaltyPointEntry(doc, method=None):
                     if payment.mode_of_payment == invoice_payment.mode_of_payment:
                         doc.loyalty_points += invoice_payment.amount * payment.amount / program.conversion_factor
     return
+
+def afterSaveItemPrice(doc, method=None):
+    if doc is not None and doc.price_list == "Revenda":
+        ll = frappe.db.get_all("Item Price", filters={"item_code": doc.item_code}, fields=["price_list", "name", "price_list_rate"], order_by="price_list_rate")
+        if ll is not None and len(ll) == 2:    
+            revenda = ll[0] if ll[0].price_list == "Revenda" else ll[1]
+            cliente = ll[0] if ll[0].price_list == "Cliente" else ll[1]
+
+            rules = frappe.db.get_all("Pricing Rule Item Code", filters={"item_code": doc.item_code}, fields=["parent"])
+            if rules is not None and len(rules) == 1:
+                frappe.db.set_value("Pricing Rule", rules[0].parent, "rate", revenda.price_list_rate)
+            elif rules is None or len(rules) == 0:
+                rule = frappe.new_doc("Pricing Rule")
+                rule.apply_on = "Item Code"
+                rule.price_or_product_discount = "Price"
+                rule.selling = 1
+                rule.applicable_for = "Customer Group"
+                rule.customer_group = "Revenda"
+                rule.rate_or_discount = "Rate"
+                rule.rate = revenda.price_list_rate
+                rule.append("items", {"item_code": doc.item_code})
+                rule.title = doc.item_name
+                rule.insert()
+    return
