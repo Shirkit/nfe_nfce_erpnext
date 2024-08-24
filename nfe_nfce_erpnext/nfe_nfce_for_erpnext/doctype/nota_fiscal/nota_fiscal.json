@@ -167,7 +167,7 @@
    "fieldtype": "Data",
    "label": "CPF",
    "length": 11,
-   "mandatory_depends_on": "eval:!doc.cnpj"
+   "mandatory_depends_on": "eval:!doc.cnpj && doc.modelo == \"(1) - NF-e\""
   },
   {
    "depends_on": "cpf",
@@ -183,7 +183,7 @@
    "fieldtype": "Data",
    "label": "CNPJ",
    "length": 14,
-   "mandatory_depends_on": "eval:!doc.cpf"
+   "mandatory_depends_on": "eval:!doc.cpf && doc.modelo == \"(1) - NF-e\""
   },
   {
    "depends_on": "cnpj",
@@ -204,7 +204,7 @@
    "fieldname": "consumidor_final",
    "fieldtype": "Select",
    "label": "Consumidor Final",
-   "options": "(1) - Normal\n(2) - Consumidor Final"
+   "options": "\n(1) - Normal\n(2) - Consumidor Final"
   },
   {
    "fieldname": "contribuinte",
@@ -542,7 +542,7 @@
    "fieldname": "formas_pagamento",
    "fieldtype": "Table",
    "label": "Formas de Pagamento",
-   "mandatory_depends_on": "eval: !doc.forma_pagamento",
+   "mandatory_depends_on": "eval:!doc.formas_pagamento.length",
    "options": "Forma de Pagamento"
   },
   {
@@ -585,7 +585,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-07-21 08:32:56.782663",
+ "modified": "2024-08-23 16:30:25.965023",
  "modified_by": "Administrator",
  "module": "NFe NFCe for ERPNext",
  "name": "Nota Fiscal",

@@ -422,12 +422,12 @@ def criarNotaFiscal(*args, **kwargs):
 
     contacts = linked.get("Contact")
 
-    if customer.customer_primary_address is not None:
+    if (modelo == 1 or modelo == "1") and customer.customer_primary_address is not None:
         primary_address = frappe.get_doc("Address", customer.customer_primary_address)
         nota.email = primary_address.email_id
         nota.telefone = primary_address.phone
 
-    if customer.customer_primary_contact is not None:
+    if (modelo == 1 or modelo == "1") and customer.customer_primary_contact is not None:
         primary_contact = frappe.get_doc("Contact", customer.customer_primary_contact)
         nota.email = (
             primary_contact.email_id
@@ -567,6 +567,12 @@ def criarNotaFiscal(*args, **kwargs):
             forma.valor_pagamento = amnt
             nota.formas_pagamento.append(forma)
         x = x + 1
+
+    if server_doc.discount_amount is not None and server_doc.discount_amount > 0:
+        nota.desconto += server_doc.discount_amount
+
+    if server_doc.loyalty_points is not None and server_doc.loyalty_points > 0 and server_doc.loyalty_amount is not None and server_doc.loyalty_amount > 0:
+        nota.desconto += server_doc.loyalty_amount
 
     nota.link_id = server_doc.name
     nota.link = server_doc.doctype
