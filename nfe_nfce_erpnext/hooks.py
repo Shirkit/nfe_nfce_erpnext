@@ -141,6 +141,7 @@ doc_events = {
     },
     "Item Price": {
         "after_insert": "nfe_nfce_erpnext.api.afterSaveItemPrice",
+        "on_update": "nfe_nfce_erpnext.api.afterSaveItemPrice",
     }
 }
 

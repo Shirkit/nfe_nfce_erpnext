@@ -440,16 +440,16 @@ def criarNotaFiscal(*args, **kwargs):
             else nota.telefone + "," + primary_contact.phone
         )
 
-    print(modelo)
-    print(server_doc.customer_address)
+    # print(modelo)
+    # print(server_doc.customer_address)
     addresses = linked.get("Address")
-    print(addresses)
+    # print(addresses)
 
     if modelo == 1 or modelo == "1":
         for address in addresses:
-            print(address)
-            print(address.address_type)
-            print(address.city)
+            # print(address)
+            # print(address.address_type)
+            # print(address.city)
             address = frappe.get_doc("Address", address.name)
             if address.address_type == "Billing":
                 if (
@@ -586,7 +586,7 @@ def criarNotaFiscal(*args, **kwargs):
         )
 
     if insert and server_doc is not None:
-        print("Inserting")
+        # print("Inserting")
         nota.insert()
         nota.save()
         frappe.db.commit()
