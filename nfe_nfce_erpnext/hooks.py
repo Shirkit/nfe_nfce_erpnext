@@ -10,7 +10,7 @@ app_license = "mpl-2.0"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/nfe_nfce_erpnext/css/nfe_nfce_erpnext.css"
+app_include_css = ["/assets/nfe_nfce_erpnext/css/pos.css"]
 app_include_js = ["/assets/nfe_nfce_erpnext/js/criarNota.js"]
 
 # include js, css files in header of web template

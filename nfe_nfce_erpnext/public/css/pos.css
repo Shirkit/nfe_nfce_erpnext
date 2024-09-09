@@ -1,0 +1,5 @@
+body[data-route="point-of-sale"] .point-of-sale-app > .payment-container > .payment-modes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: row;
+}
