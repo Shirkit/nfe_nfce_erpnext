@@ -622,10 +622,11 @@ def criarNotaFiscal(*args, **kwargs):
 
 
 @frappe.whitelist()
-def puxarDadosCNPJ(*args, **kwargs):
+def pullDataCNPJ(*args, **kwargs):
 
-    loaded_json = json.loads(kwargs["doc"])
-    cnpj = loaded_json.get("tax_id")
+    doc = kwargs["doc"]
+    cnpj = kwargs["cnpj"]
+    doctype = kwargs["doctype"]
     if cnpj is not None:
 
         cnpj = re.sub("\D", "", cnpj)
@@ -666,13 +667,13 @@ def puxarDadosCNPJ(*args, **kwargs):
         if len(inscricoes_estaduais) == 1:
             inscricao_estadual = inscricoes_estaduais[0].get("inscricao_estadual")
 
-        customer = frappe.get_doc("Customer", loaded_json.get("name"))
+        customer = frappe.get_doc(doctype, doc)
 
         customer.nf_razao_social = razao_social
         customer.nf_inscricao_estadual = inscricao_estadual
 
         results = get_linked_docs(
-            "Customer", customer.name, linkinfo=get_linked_doctypes("Customer")
+            doctype, customer.name, linkinfo=get_linked_doctypes(doctype)
         )
 
         addresses = results.get("Address")
@@ -690,12 +691,13 @@ def puxarDadosCNPJ(*args, **kwargs):
             address.email_id = email
             address.phone = telefone
             link = frappe.new_doc("Dynamic Link")
-            link.link_doctype = "Customer"
+            link.link_doctype = doctype
             link.link_name = customer.name
             address.links.append(link)
             address.insert()
 
         customer.save()
+        frappe.db.commit()
         customer.notify_update()
 
         # TODO recarregar a página após salvar
