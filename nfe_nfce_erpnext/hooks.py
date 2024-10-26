@@ -36,7 +36,11 @@ fixtures = [
     {
         "doctype": "Client Script",
         "filters": [["module", "in", ("NFe NFCe for ERPNext")]],
-    }
+    },
+    {
+        "doctype": "Print Format",
+        "filters": [["module", "in", ("NFe NFCe for ERPNext")]],
+    },
 ]
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
