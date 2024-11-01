@@ -519,6 +519,21 @@ def criarNotaFiscal(*args, **kwargs):
         produto = frappe.new_doc("Produto")
         produto_loaded = frappe.get_doc("Item", item.get("item_code"))
 
+        if not produto_loaded.get("nf_ncm") or produto_loaded.get("nf_uom") or produto_loaded.get("nf_classe_imposto") or produto_loaded.get("nf_origem"):
+            frappe.throw(
+                title="Produto não configurado",
+                msg="O produto "
+                + produto_loaded.get("item_name")
+                + " não está configurado para emissão de Nota Fiscal.",
+            )
+            return json.dumps(
+                {
+                    "error": "O produto "
+                    + produto_loaded.get("item_name")
+                    + " não está configurado para emissão de Nota Fiscal."
+                }
+            )
+
         produto.nome = produto_loaded.get("item_name")
         produto.codigo = produto_loaded.get("item_code")
         produto.ncm = re.sub("\D", "", produto_loaded.get("nf_ncm"))
@@ -656,6 +671,7 @@ def pullDataCNPJ(*args, **kwargs):
             phone = phonenumbers.format_number(
                 phone, phonenumbers.PhoneNumberFormat.E164
             )
+            phone = phone
             final = phone[5:]
             if len(final) == 8:
                 final = final[:4] + "-" + final[4:]
