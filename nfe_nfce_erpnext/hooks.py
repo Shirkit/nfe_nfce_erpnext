@@ -11,7 +11,7 @@ app_license = "mpl-2.0"
 
 # include js, css files in header of desk.html
 app_include_css = ["/assets/nfe_nfce_erpnext/css/pos.css"]
-app_include_js = ["/assets/nfe_nfce_erpnext/js/criarNota.js"]
+# app_include_js = ["/assets/nfe_nfce_erpnext/js/nfe_nfce_erpnext.js"]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/nfe_nfce_erpnext/css/nfe_nfce_erpnext.css"
@@ -29,8 +29,10 @@ page_js = {"point-of-sale": "public/js/pos.js"}
 
 # include js in doctype views
 doctype_js = {
-    "Sales Invoice": "/assets/nfe_nfce_erpnext/js/criarNota.js",
-    "POS Invoice": "/assets/nfe_nfce_erpnext/js/criarNota.js",
+    "Sales Invoice": "public/js/doctype/sales_invoice.js",
+    "POS Invoice": "public/js/doctype/sales_invoice.js",
+    "Customer" : "public/js/doctype/customer.js",
+    "Supplier" : "public/js/doctype/customer.js"
 }
 fixtures = [
     {
@@ -42,7 +44,7 @@ fixtures = [
         "filters": [["module", "in", ("NFe NFCe for ERPNext")]],
     },
 ]
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_list_js = {"Item" : "public/js/list_view/item_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
