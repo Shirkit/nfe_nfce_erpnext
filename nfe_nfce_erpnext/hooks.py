@@ -32,7 +32,8 @@ doctype_js = {
     "Sales Invoice": "public/js/doctype/sales_invoice.js",
     "POS Invoice": "public/js/doctype/sales_invoice.js",
     "Customer" : "public/js/doctype/customer.js",
-    "Supplier" : "public/js/doctype/customer.js"
+    "Supplier" : "public/js/doctype/customer.js",
+    "Item": "public/js/doctype/item.js",
 }
 fixtures = [
     {
