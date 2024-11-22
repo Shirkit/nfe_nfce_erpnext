@@ -57,6 +57,7 @@ frappe.require('point-of-sale.bundle.js', function () {
         }
     }
 
+    // TODO: Migrate this into another custom APP exclsuive for Orquidario Bahia or POS
     erpnext.PointOfSale.ItemSelector = class MyPosSelector extends erpnext.PointOfSale.ItemSelector {
         constructor({ frm, wrapper, events, pos_profile, settings }) {
             super({ frm, wrapper, events, pos_profile, settings })
