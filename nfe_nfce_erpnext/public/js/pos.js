@@ -130,7 +130,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                             abbr += " " + w.trim()[0];
                             if (isNumber(w.slice(-1))) {
                                 if (isNumber(w.slice(-2))) {
-                                    abbr += w.slice(-2);
+                                    abbr += w.slice(-2).trim();
                                 } else {
                                     abbr += w.slice(-1);
                                 }
