@@ -170,4 +170,4 @@ $.extend(erpnext.item, {
             make_and_show_dialog(fields);
         });
     }
-})
+});

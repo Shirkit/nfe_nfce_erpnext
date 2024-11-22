@@ -1,14 +1,14 @@
 frappe.ui.form.on("POS Invoice", {
 
     timeline_refresh: function (frm) {
-        add_nf_buttons(frm, "server_pos_invoice")
+        add_nf_buttons(frm, "server_pos_invoice");
     },
 });
 
 frappe.ui.form.on("Sales Invoice", {
 
     timeline_refresh: function (frm) {
-        add_nf_buttons(frm, "server_invoice")
+        add_nf_buttons(frm, "server_invoice");
     },
 });
 
@@ -24,14 +24,14 @@ function add_nf_buttons(frm, server_invoice) {
                 "modelo": 1
             },
             callback: function (r) {
-                console.log(r)
+                console.log(r);
                 if (!r.exc) {
-                    var doc = frappe.model.sync(r.message);
+                    // var doc = frappe.model.sync(r.message);
                     frappe.set_route("Form", r.message.doctype, r.message.name);
                 }
             }
         });
-    })
+    });
 
     frm.add_custom_button(__('Criar NFC-e'), function () {
         frappe.call({
@@ -43,12 +43,12 @@ function add_nf_buttons(frm, server_invoice) {
                 "modelo": 2
             },
             callback: function (r) {
-                console.log(r)
+                console.log(r);
                 if (!r.exc) {
-                    var doc = frappe.model.sync(r.message);
+                    // var doc = frappe.model.sync(r.message);
                     frappe.set_route("Form", r.message.doctype, r.message.name);
                 }
             }
         });
-    })
+    });
 }

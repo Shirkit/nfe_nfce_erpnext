@@ -1,72 +1,71 @@
-frappe.provide('erpnext.PointOfSale')
+frappe.provide('erpnext.PointOfSale');
 frappe.require('point-of-sale.bundle.js', function () {
 
     function qz_connect() {
         return new Promise(function (resolve, reject) {
             if (qz && qz.websocket && qz.websocket.isActive()) {
-                resolve()
+                resolve();
             } else {
                 frappe.ui.form.qz_connect().then(() => {
-                }).then(resolve, reject)
+                }).then(resolve, reject);
             }
-        })
+        });
     }
 
-    default_printer = null
+    var default_printer = null;
 
     async function qz_print(job) {
-        var options = {}
+        var options = {};
         if (job.printerOptions)
-            options = job.printerOptions
+            options = job.printerOptions;
 
         var data = [{
             type: 'pixel',
             format: 'html',
             flavor: 'plain',
             data: job.html
-        }]
-
-        if (!default_printer)
-            default_printer = await qz.printers.getDefault()
+        }];
 
         // TODO Add support for more printers than just the default one to print NF-e on the network
-        var config = qz.configs.create(default_printer, options)
+        var config = qz_config(options);
 
         return qz_connect().then(function () {
             for (var i = 0; i < (job.copies ? job.copies : 1); i++) {
                 qz.print(config, data).catch(function (e) {
-                    console.error(e)
-                }).then(function (e) {
-                })
+                    console.error(e);
+                }).then(function () {
+                });
             }
-        })
+        });
     }
 
     var cfg = null;
-    function qz_config() {
+    async function qz_config(options) {
+        if (!default_printer)
+            default_printer = await qz.printers.getDefault();
+
         if (cfg == null) {
-            cfg = qz.configs.create(null)
+            cfg = qz.configs.create(default_printer, options);
         }
 
-        return cfg
+        return cfg;
     }
 
     erpnext.PointOfSale.Controller = class MyPosController extends erpnext.PointOfSale.Controller {
         constructor(wrapper) {
-            super(wrapper)
+            super(wrapper);
         }
-    }
+    };
 
     // TODO: Migrate this into another custom APP exclsuive for Orquidario Bahia or POS
     erpnext.PointOfSale.ItemSelector = class MyPosSelector extends erpnext.PointOfSale.ItemSelector {
         constructor({ frm, wrapper, events, pos_profile, settings }) {
-            super({ frm, wrapper, events, pos_profile, settings })
+            super({ frm, wrapper, events, pos_profile, settings });
         }
 
         get_item_html(item) {
             const me = this;
-            // eslint-disable-next-line no-unused-vars
-            const { item_image, serial_no, batch_no, barcode, actual_qty, uom, price_list_rate, description } = item;
+            const { item_image, serial_no, batch_no, actual_qty, uom, price_list_rate, description } = item;
             const precision = flt(price_list_rate, 2) % 1 != 0 ? 2 : 0;
             let indicator_color;
             let qty_to_display = actual_qty;
@@ -96,7 +95,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                                 >
                             </div>`;
                 } else {
-                    if (me.hide_images) return ""
+                    if (me.hide_images) return "";
                     return `<div class="item-qty-pill">
                                 <span class="indicator-pill whitespace-nowrap ${indicator_color}">${qty_to_display}</span>
                             </div>
@@ -105,10 +104,10 @@ frappe.require('point-of-sale.bundle.js', function () {
             }
 
             function abbr(txt, desc) {
-                console.log(txt, desc)
+                console.log(txt, desc);
                 if (!txt) return "";
                 if (desc) {
-                    const split = strip(desc).split(":")
+                    const split = strip(desc).split(":");
                     if (split.length > 1) {
                         if (split[0].slice(-4) == "ABBR") {
                             return split[1].trim();
@@ -118,10 +117,10 @@ frappe.require('point-of-sale.bundle.js', function () {
                 var abbr = "";
                 $.each(txt.split("-"), function (i, w) {
                     if (abbr.length == 0) {
-                        if (w.startsWith("Phal")) abbr = "Phal"
-                        else if (w.startsWith("Dend")) abbr = "Dend"
+                        if (w.startsWith("Phal")) abbr = "Phal";
+                        else if (w.startsWith("Dend")) abbr = "Dend";
                         else {
-                            abbr = w.substring(0, 3) + " "
+                            abbr = w.substring(0, 3);
                         }
                     } else {
                         if (w == "Tronco")
@@ -178,17 +177,17 @@ frappe.require('point-of-sale.bundle.js', function () {
                 </div>`;
         }
 
-    }
+    };
 
     erpnext.PointOfSale.PastOrderSummary = class MyPastOrderSummary extends erpnext.PointOfSale.PastOrderSummary {
         constructor({ wrapper, events }) {
             events.imprimir_nf = (name) => {
                 frappe.run_serially([
                     () => this.imprimir_nf(name),
-                ])
-            }
+                ]);
+            };
 
-            super({ wrapper, events })
+            super({ wrapper, events });
         }
 
         imprimir_nf(name) {
@@ -202,61 +201,61 @@ frappe.require('point-of-sale.bundle.js', function () {
                 callback: function (r) {
                     //console.log(r)
                     if (r.message) {
-                        let parse = JSON.parse(r.message)
+                        let parse = JSON.parse(r.message);
                         // console.log(parse)
                         if (parse.html) {
-                            parse.html = parse.html.replaceAll("\n", "")
+                            parse.html = parse.html.replaceAll("\n", "");
                             qz_connect().then(() => {
-                                qz_print({ html: parse.html, copies: 1 })
-                            })
+                                qz_print({ html: parse.html, copies: 1 });
+                            });
                         }
                         //var doc = frappe.model.sync(r.message)
                         //frappe.set_route("Form", r.message.doctype, r.message.name)
                     }
                 }
-            })
+            });
 
             frappe.ui.form.qz_init().then(() => {
 
                 qz.security.setCertificatePromise(function (resolve, reject) {
                     fetch(document.location.origin + "/assets/nfe_nfce_erpnext/cert.pem", { cache: 'no-store', headers: { 'Content-Type': 'text/plain' } })
-                        .then(function (data) { data.ok ? resolve(data.text()) : reject(data.text()) })
-                })
+                        .then(function (data) { data.ok ? resolve(data.text()) : reject(data.text()); });
+                });
 
-                qz.security.setSignatureAlgorithm("SHA512") // Since 2.1
+                qz.security.setSignatureAlgorithm("SHA512"); // Since 2.1
                 qz.security.setSignaturePromise(function (toSign) {
                     return function (resolve, reject) {
                         fetch(document.location.origin + "/api/method/nfe_nfce_erpnext.api.signQz?message=" + toSign, { cache: 'no-store', headers: { 'Content-Type': 'text/plain' } })
-                            .then(function (data) { data.ok ? resolve(data.text()) : reject(data.text()) })
-                    }
-                })
+                            .then(function (data) { data.ok ? resolve(data.text()) : reject(data.text()); });
+                    };
+                });
 
-                qz_connect()
-            })
+                qz_connect();
+            });
 
         }
 
         get_condition_btn_map(after_submission) {
-            let returned = super.get_condition_btn_map(after_submission)
+            let returned = super.get_condition_btn_map(after_submission);
 
             if (after_submission)
-                returned[0].visible_btns.push('Imprimir NFC-e')
+                returned[0].visible_btns.push('Imprimir NFC-e');
             /*else {
                 returned[1].visible_btns.push('Emitir NFC-e')
                 returned[2].visible_btns.push('Emitir NFC-e')
             }*/
 
-            return returned
+            return returned;
         }
 
         bind_events() {
-            super.bind_events()
+            super.bind_events();
             this.$summary_container.on("click", ".imprimir-btn", () => {
                 // console.log("Imprimir NFC-e")
-                this.events.imprimir_nf(this.doc.name)
-            })
+                this.events.imprimir_nf(this.doc.name);
+            });
             // console.log(this.events)
         }
-    }
+    };
 
-})
+});

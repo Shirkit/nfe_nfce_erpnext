@@ -6,8 +6,8 @@ frappe.ui.form.on("Nota Fiscal", {
             if ((!frm.doc.chave || frm.doc.status.toLowerCase() != "aprovado")) {
                 frm.page.add_action_item(__('Emitir NF-e'), function () {
                     if (frm.doc.__unsaved) {
-                        frappe.throw("Salve a nota antes de emitir")
-                        return
+                        frappe.throw("Salve a nota antes de emitir");
+                        return;
                     } else
                         frappe.call({
                             type: "GET",
@@ -17,44 +17,44 @@ frappe.ui.form.on("Nota Fiscal", {
                                 "source_name": frm.doc
                             },
                             callback: function (r) {
-                                console.log(r)
+                                console.log(r);
                                 if (r.message) {
-                                    msg = JSON.parse(r.message)
+                                    var msg = JSON.parse(r.message);
                                     if (msg.error)
-                                        frappe.throw(msg.error)
+                                        frappe.throw(msg.error);
                                     else if (msg.success === true) {
-                                        console.log(msg)
-                                        frappe.msgprint("Nota emitida com sucesso. " + msg.modelo + " - " + msg.chave)
+                                        console.log(msg);
+                                        frappe.msgprint("Nota emitida com sucesso. " + msg.modelo + " - " + msg.chave);
                                         // TODO tentar imprimir com QZTray
                                     }
                                 }
                             }
                         });
-                })
+                });
             } else {
                 if (frm.doc.status.toLowerCase() === "aprovado") {
                     frm.page.add_action_item(__('Abrir Danfe'), function () {
-                        window.open('https://nfe.webmaniabr.com/danfe/' + frm.doc.chave, '_blank')
-                    })
+                        window.open('https://nfe.webmaniabr.com/danfe/' + frm.doc.chave, '_blank');
+                    });
                     frm.page.add_action_item(__('Abrir Danfe Simples'), function () {
-                        window.open('https://nfe.webmaniabr.com/danfe/simples/' + frm.doc.chave, '_blank')
-                    })
+                        window.open('https://nfe.webmaniabr.com/danfe/simples/' + frm.doc.chave, '_blank');
+                    });
                     frm.page.add_action_item(__('Abrir Danfe Etiqueta'), function () {
-                        window.open('https://nfe.webmaniabr.com/danfe/etiqueta/' + frm.doc.chave, '_blank')
-                    })
+                        window.open('https://nfe.webmaniabr.com/danfe/etiqueta/' + frm.doc.chave, '_blank');
+                    });
                     frm.page.add_action_item(__('Abrir XML'), function () {
-                        window.open('https://nfe.webmaniabr.com/xmlnfe/' + frm.doc.chave, '_blank')
-                    })
+                        window.open('https://nfe.webmaniabr.com/xmlnfe/' + frm.doc.chave, '_blank');
+                    });
                 }
             }
         }
     },
     onload: function (frm) {
         // frappe.msgprint("onload");
-        window.frm = frm
+        window.frm = frm;
     },
 
-    refresh: function (frm) {
-        // frappe.msgprint("refresh");
-    }
+    /*refresh: function (frm) {
+         frappe.msgprint("refresh");
+    }*/
 });

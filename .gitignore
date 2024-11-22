@@ -2,3 +2,4 @@ __pycache__/
 nfe_nfce_erpnext/webmania
 nfe_nfce_erpnext/key.pem
 nfe_nfce_erpnext/public/cert.pem
+node_modules

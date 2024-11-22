@@ -1,11 +1,9 @@
 frappe.listview_settings["Item"] = {
     hide_name_column: true,
-    onload(view) {
-        console.log("List view loaded")
-    },
     add_fields: ["item_code"],
 
     button: {
+        // eslint-disable-next-line no-unused-vars
         show: function (doc) {
             return '<i class="fa fa-edit"></i> Prices';
         },
@@ -106,6 +104,7 @@ frappe.listview_settings["Item"] = {
         },
     },
 
+    // eslint-disable-next-line no-unused-vars
     refresh: function (listview) {
         $("button.btn.btn-action.btn-default.btn-xs").addClass("btn-info").removeClass("btn-default");
     },
@@ -336,15 +335,15 @@ frappe.listview_settings["Item"] = {
                     });
                     checked_items.forEach((item) => {
                         add_dialog.fields_dict["add_prices_table"].grid.add_new_row();
-                        add_dialog.fields_dict["add_prices_table"].grid.data[add_dialog.fields_dict["add_prices_table"].grid.data.length-1].item_code = item
-                        add_dialog.fields_dict["add_prices_table"].grid.data[add_dialog.fields_dict["add_prices_table"].grid.data.length-1].price_list = "Cliente"
+                        add_dialog.fields_dict["add_prices_table"].grid.data[add_dialog.fields_dict["add_prices_table"].grid.data.length-1].item_code = item;
+                        add_dialog.fields_dict["add_prices_table"].grid.data[add_dialog.fields_dict["add_prices_table"].grid.data.length-1].price_list = "Cliente";
                         add_dialog.fields_dict["add_prices_table"].grid.add_new_row();
-                        add_dialog.fields_dict["add_prices_table"].grid.data[add_dialog.fields_dict["add_prices_table"].grid.data.length-1].item_code = item
-                        add_dialog.fields_dict["add_prices_table"].grid.data[add_dialog.fields_dict["add_prices_table"].grid.data.length-1].price_list = "Revenda"
-                    })
+                        add_dialog.fields_dict["add_prices_table"].grid.data[add_dialog.fields_dict["add_prices_table"].grid.data.length-1].item_code = item;
+                        add_dialog.fields_dict["add_prices_table"].grid.data[add_dialog.fields_dict["add_prices_table"].grid.data.length-1].price_list = "Revenda";
+                    });
                     add_dialog.refresh();
                     add_dialog.show();
-                })
+                });
                 d.show();
             });
         });
