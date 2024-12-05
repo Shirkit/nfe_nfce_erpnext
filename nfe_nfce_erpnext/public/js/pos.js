@@ -27,7 +27,7 @@ frappe.require('point-of-sale.bundle.js', function () {
         }];
 
         // TODO Add support for more printers than just the default one to print NF-e on the network
-        var config = qz_config(options);
+        var config = await qz_config(options);
 
         return qz_connect().then(function () {
             for (var i = 0; i < (job.copies ? job.copies : 1); i++) {
