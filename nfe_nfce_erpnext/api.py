@@ -519,7 +519,7 @@ def criarNotaFiscal(*args, **kwargs):
         produto = frappe.new_doc("Produto")
         produto_loaded = frappe.get_doc("Item", item.get("item_code"))
 
-        if not produto_loaded.get("nf_ncm") or produto_loaded.get("nf_uom") or produto_loaded.get("nf_classe_imposto") or produto_loaded.get("nf_origem"):
+        if not produto_loaded.get("nf_ncm") or not produto_loaded.get("nf_uom") or not produto_loaded.get("nf_classe_imposto") or not produto_loaded.get("nf_origem"):
             frappe.throw(
                 title="Produto não configurado",
                 msg="O produto "
