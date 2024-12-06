@@ -55,6 +55,77 @@ frappe.require('point-of-sale.bundle.js', function () {
         constructor(wrapper) {
             super(wrapper);
         }
+
+        async save_and_checkout() {
+            if (this.frm.is_dirty()) {
+                let save_error = false;
+                let rule = false;
+                if (!this.frm.doc.ignore_pricing_rule) {
+                    this.frm.doc.ignore_pricing_rule = 1;
+                    rule = true;
+                }
+                await this.frm.save(null, null, null, () => (save_error = true));
+                if (rule) {
+                    this.frm.doc.ignore_pricing_rule = 0;
+                    rule = false;
+                }
+                // only move to payment section if save is successful
+                !save_error && this.payment.checkout();
+                // show checkout button on error
+                save_error &&
+                    setTimeout(() => {
+                        this.cart.toggle_checkout_btn(true);
+                    }, 300); // wait for save to finish
+            } else {
+                this.payment.checkout();
+            }
+        }
+
+        init_payments() {
+            this.payment = new erpnext.PointOfSale.Payment({
+                wrapper: this.$components_wrapper,
+                events: {
+                    get_frm: () => this.frm || {},
+    
+                    get_customer_details: () => this.customer_details || {},
+    
+                    toggle_other_sections: (show) => {
+                        if (show) {
+                            this.item_details.$component.is(":visible")
+                                ? this.item_details.$component.css("display", "none")
+                                : "";
+                            this.item_selector.toggle_component(false);
+                        } else {
+                            this.item_selector.toggle_component(true);
+                        }
+                    },
+    
+                    submit_invoice: () => {
+                        let rule = false;
+                        if (!this.frm.doc.ignore_pricing_rule) {
+                            this.frm.doc.ignore_pricing_rule = 1;
+                            rule = true;
+                            for (let i = 0; i < this.frm.doc.items.length; i++) {
+                                this.frm.doc.items[i].pricing_rules = "";
+                            }
+                        }
+                        this.frm.savesubmit().then((r) => {
+                            this.toggle_components(false);
+                            this.order_summary.toggle_component(true);
+                            this.order_summary.load_summary_of(this.frm.doc, true);
+                            frappe.show_alert({
+                                indicator: "green",
+                                message: __("POS invoice {0} created succesfully", [r.doc.name]),
+                            });
+                            if (rule) {
+                                this.frm.doc.ignore_pricing_rule = 0;
+                                rule = false;
+                            }
+                        });
+                    },
+                },
+            });
+        }
     };
 
     // TODO: Migrate this into another custom APP exclsuive for Orquidario Bahia or POS
