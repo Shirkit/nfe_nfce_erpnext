@@ -23,3 +23,7 @@ body[data-route="point-of-sale"] .point-of-sale-app > .payment-container > .paym
 .point-of-sale-app > .items-selector > .items-container > .item-wrapper {
     align-content: center;
 }
+
+.point-of-sale-app > .items-selector > .items-container > .item-wrapper .item-display {
+    text-align: center;
+}
