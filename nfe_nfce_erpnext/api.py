@@ -88,6 +88,14 @@ def webmaniaSettings():
     }
     return obj
 
+def remove_nulls(value):
+    if isinstance(value, dict):
+        return {k: remove_nulls(v) for k, v in value.items() if v is not None}
+    elif isinstance(value, list):
+        return [remove_nulls(item) for item in value if item is not None]
+    else:
+        return value
+
 @frappe.whitelist()
 def signQz(message):
     key = serialization.load_pem_private_key(
@@ -249,26 +257,30 @@ def emitirNotaFiscal(*args, **kwargs):
 
     url = "https://webmaniabr.com/api/1/nfe/emissao/"
 
-    dumps = json.dumps(result)
+    dumps = json.dumps(remove_nulls(result))
 
     response = requests.request("POST", url, data=dumps, headers=headers)
 
     if response.status_code != 200:
         # Uknown error
+        print(dumps)
         frappe.throw(title="Erro ao emitir nota fiscal", msg=response.text)
         return response.text
 
     if "json" not in response.headers["content-type"]:
+        print(dumps)
         frappe.throw(title="Erro ao emitir nota fiscal", msg=response.text)
         return response.text
 
     returned_json = response.json()
 
     if returned_json.get("error") is not None:
+        print(dumps)
         frappe.throw(title="Erro ao emitir nota fiscal", msg=response.text)
         return response.text
 
     if returned_json.get("status") == "reprovado":
+        print(dumps)
         frappe.throw(title="Erro ao emitir nota fiscal", msg=response.text)
         return json.dumps({"error": returned_json.get("motivo")})
 
@@ -299,6 +311,7 @@ def emitirNotaFiscal(*args, **kwargs):
             }
         )
 
+    print(dumps)
     frappe.throw(title="Erro desconhecido emitir nota fiscal", msg=response.text)
     return json.dumps({"error": "Erro desconhecido."})
 
