@@ -263,24 +263,20 @@ def emitirNotaFiscal(*args, **kwargs):
 
     if response.status_code != 200:
         # Uknown error
-        print(dumps)
         frappe.throw(title="Erro ao emitir nota fiscal", msg=response.text)
         return response.text
 
     if "json" not in response.headers["content-type"]:
-        print(dumps)
         frappe.throw(title="Erro ao emitir nota fiscal", msg=response.text)
         return response.text
 
     returned_json = response.json()
 
     if returned_json.get("error") is not None:
-        print(dumps)
         frappe.throw(title="Erro ao emitir nota fiscal", msg=response.text)
         return response.text
 
     if returned_json.get("status") == "reprovado":
-        print(dumps)
         frappe.throw(title="Erro ao emitir nota fiscal", msg=response.text)
         return json.dumps({"error": returned_json.get("motivo")})
 
@@ -311,7 +307,6 @@ def emitirNotaFiscal(*args, **kwargs):
             }
         )
 
-    print(dumps)
     frappe.throw(title="Erro desconhecido emitir nota fiscal", msg=response.text)
     return json.dumps({"error": "Erro desconhecido."})
 
