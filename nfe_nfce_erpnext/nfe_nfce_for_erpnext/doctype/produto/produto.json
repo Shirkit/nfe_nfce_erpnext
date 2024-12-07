@@ -1,116 +1,116 @@
 {
-    "actions": [],
-    "allow_rename": 1,
-    "creation": "2024-04-07 09:32:08.641310",
-    "doctype": "DocType",
-    "editable_grid": 1,
-    "engine": "InnoDB",
-    "field_order": [
-        "nome",
-        "codigo",
-        "ncm",
-        "quantidade",
-        "unidade",
-        "origem",
-        "desconto",
-        "subtotal",
-        "total",
-        "classe_imposto",
-        "cnpj_fabricante"
-    ],
-    "fields": [
-        {
-            "fieldname": "nome",
-            "fieldtype": "Data",
-            "in_list_view": 1,
-            "label": "Nome",
-            "length": 120,
-            "reqd": 1
-        },
-        {
-            "fieldname": "codigo",
-            "fieldtype": "Data",
-            "label": "C\u00f3digo",
-            "length": 60
-        },
-        {
-            "fieldname": "ncm",
-            "fieldtype": "Data",
-            "label": "NCM",
-            "length": 8,
-            "reqd": 1
-        },
-        {
-            "fieldname": "quantidade",
-            "fieldtype": "Int",
-            "in_list_view": 1,
-            "label": "Quantidade",
-            "non_negative": 1,
-            "reqd": 1
-        },
-        {
-            "fieldname": "unidade",
-            "fieldtype": "Select",
-            "label": "Unidade",
-            "options": "(AMPOLA) - Ampola\n(BALDE) - Balde\n(BANDEJ) - Bandeja\n(BARRA) - Barra\n(BISNAG) - Bisnaga\n(BLOCO) - Bloco\n(BOBINA) - Bobina\n(BOMB) - Bombona\n(CAPS) - C\u00e1psula\n(CART) - Cartela\n(CENTO) - Cento\n(CJ) - Conjunto\n(CM) - Cent\u00edmetro\n(CM2) - Centimetro Quadrado\n(CX) - Caixa\n(CX2) - Caixa com 2 Unidades\n(CX3) - Caixa com 3 Unidades\n(CX5) - Caixa com 5 Unidades\n(CX10) - Caixa com 10 Unidades\n(CX15) - Caixa com 15 Unidades\n(CX20) - Caixa com 20 Unidades\n(CX25) - Caixa com 25 Unidades\n(CX50) - Caixa com 50 Unidades\n(CX100) - Caixa com 100 Unidades\n(DISP) - Display\n(DUZIA) - Duzia\n(EMBAL) - Embalagem\n(FARDO) - Fardo\n(FOLHA) - Folha\n(FRASCO) - Frasco\n(GALAO) - Gal\u00e3o\n(GF) - Garrafa\n(GRAMAS) - Gramas\n(JOGO) - Jogo\n(KG) - Quilograma\n(KIT) - Kit\n(LATA) - Lata\n(LITRO) - Litro\n(M) - Metro\n(M2) - Metro Quadrado\n(M3) - Metro C\u00fabico\n(MILHEI) - Milheiro\n(ML) - Mililitro\n(MWH) - Megawatt Hora\n(PACOTE) - Pacote\n(PALETE) - Palete\n(PARES) - Pares\n(PC) - Pe\u00e7a\n(POTE) - Pote\n(K) - Quilate\n(RESMA) - Resma\n(ROLO) - Rolo\n(SACO) - Saco\n(SACOLA) - Sacola\n(TAMBOR) - Tambor\n(TANQUE) - Tanque\n(TON) - Tonelada\n(TUBO) - Tubo\n(UNID) - Unidade\n(VASIL) - Vasilhame\n(VIDRO) - Vidro",
-            "reqd": 1
-        },
-        {
-            "fieldname": "origem",
-            "fieldtype": "Select",
-            "label": "Origem",
-            "options": "(0) - Nacional, exceto as indicadas nos c\u00f3digos 3, 4, 5 e 8\n(1) - Estrangeira - Importa\u00e7\u00e3o direta, exceto a indicada no c\u00f3digo 6\n(2) - Estrangeira - Adquirida no mercado interno, exceto a indicada no c\u00f3digo 7\n(3) - Nacional, mercadoria ou bem com Conte\u00fado de Importa\u00e7\u00e3o superior a 40% e inferior ou igual a 70%\n(4) - Nacional, cuja produ\u00e7\u00e3o tenha sido feita em conformidade com os processos produtivos b\u00e1sicos de que tratam as legisla\u00e7\u00f5es citadas nos Ajustes\n(5) - Nacional, mercadoria ou bem com Conte\u00fado de Importa\u00e7\u00e3o inferior ou igual a 40%\n(6) - Estrangeira - Importa\u00e7\u00e3o direta, sem similar nacional, constante em lista da CAMEX e g\u00e1s natural\n(7) - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante lista CAMEX e g\u00e1s natural\n(8) - Nacional, mercadoria ou bem com Conte\u00fado de Importa\u00e7\u00e3o superior a 70%",
-            "reqd": 1
-        },
-        {
-            "fieldname": "desconto",
-            "fieldtype": "Float",
-            "in_list_view": 1,
-            "label": "Desconto",
-            "precision": "2"
-        },
-        {
-            "fieldname": "subtotal",
-            "fieldtype": "Float",
-            "in_list_view": 1,
-            "label": "Subtotal",
-            "non_negative": 1,
-            "precision": "2",
-            "reqd": 1
-        },
-        {
-            "fieldname": "total",
-            "fieldtype": "Float",
-            "in_list_view": 1,
-            "label": "Total",
-            "non_negative": 1,
-            "precision": "2",
-            "reqd": 1
-        },
-        {
-            "fieldname": "classe_imposto",
-            "fieldtype": "Data",
-            "in_list_view": 1,
-            "label": "Classe Imposto",
-            "reqd": 1
-        },
-        {
-            "fieldname": "cnpj_fabricante",
-            "fieldtype": "Data",
-            "label": "CNPJ do Fabricante",
-            "length": 14
-        }
-    ],
-    "index_web_pages_for_search": 1,
-    "istable": 1,
-    "links": [],
-    "modified": "2024-04-07 11:45:38.267985",
-    "modified_by": "Administrator",
-    "module": "NFe NFCe for ERPNext",
-    "name": "Produto",
-    "owner": "Administrator",
-    "permissions": [],
-    "sort_field": "modified",
-    "sort_order": "DESC",
-    "states": []
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-07 09:32:08.641310",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "nome",
+  "codigo",
+  "ncm",
+  "quantidade",
+  "unidade",
+  "origem",
+  "desconto",
+  "subtotal",
+  "total",
+  "classe_imposto",
+  "cnpj_fabricante"
+ ],
+ "fields": [
+  {
+   "fieldname": "nome",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nome",
+   "length": 120,
+   "reqd": 1
+  },
+  {
+   "fieldname": "codigo",
+   "fieldtype": "Data",
+   "label": "C\u00f3digo",
+   "length": 60
+  },
+  {
+   "fieldname": "ncm",
+   "fieldtype": "Data",
+   "label": "NCM",
+   "length": 8,
+   "reqd": 1
+  },
+  {
+   "fieldname": "quantidade",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Quantidade",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "unidade",
+   "fieldtype": "Select",
+   "label": "Unidade",
+   "options": "(UN) - Unidade\n(AMPOLA) - Ampola\n(BALDE) - Balde\n(BANDEJ) - Bandeja\n(BARRA) - Barra\n(BISNAG) - Bisnaga\n(BLOCO) - Bloco\n(BOBINA) - Bobina\n(BOMB) - Bombona\n(CAPS) - C\u00e1psula\n(CART) - Cartela\n(CENTO) - Cento\n(CJ) - Conjunto\n(CM) - Cent\u00edmetro\n(CM2) - Centimetro Quadrado\n(CX) - Caixa\n(CX2) - Caixa com 2 Unidades\n(CX3) - Caixa com 3 Unidades\n(CX5) - Caixa com 5 Unidades\n(CX10) - Caixa com 10 Unidades\n(CX15) - Caixa com 15 Unidades\n(CX20) - Caixa com 20 Unidades\n(CX25) - Caixa com 25 Unidades\n(CX50) - Caixa com 50 Unidades\n(CX100) - Caixa com 100 Unidades\n(DISP) - Display\n(DUZIA) - Duzia\n(EMBAL) - Embalagem\n(FARDO) - Fardo\n(FOLHA) - Folha\n(FRASCO) - Frasco\n(GALAO) - Gal\u00e3o\n(GF) - Garrafa\n(GRAMAS) - Gramas\n(JOGO) - Jogo\n(KG) - Quilograma\n(KIT) - Kit\n(LATA) - Lata\n(LITRO) - Litro\n(M) - Metro\n(M2) - Metro Quadrado\n(M3) - Metro C\u00fabico\n(MILHEI) - Milheiro\n(ML) - Mililitro\n(MWH) - Megawatt Hora\n(PACOTE) - Pacote\n(PALETE) - Palete\n(PARES) - Pares\n(PC) - Pe\u00e7a\n(POTE) - Pote\n(K) - Quilate\n(RESMA) - Resma\n(ROLO) - Rolo\n(SACO) - Saco\n(SACOLA) - Sacola\n(TAMBOR) - Tambor\n(TANQUE) - Tanque\n(TON) - Tonelada\n(TUBO) - Tubo\n(UNID) - Unidade\n(VASIL) - Vasilhame\n(VIDRO) - Vidro",
+   "reqd": 1
+  },
+  {
+   "fieldname": "origem",
+   "fieldtype": "Select",
+   "label": "Origem",
+   "options": "(0) - Nacional, exceto as indicadas nos c\u00f3digos 3, 4, 5 e 8\n(1) - Estrangeira - Importa\u00e7\u00e3o direta, exceto a indicada no c\u00f3digo 6\n(2) - Estrangeira - Adquirida no mercado interno, exceto a indicada no c\u00f3digo 7\n(3) - Nacional, mercadoria ou bem com Conte\u00fado de Importa\u00e7\u00e3o superior a 40% e inferior ou igual a 70%\n(4) - Nacional, cuja produ\u00e7\u00e3o tenha sido feita em conformidade com os processos produtivos b\u00e1sicos de que tratam as legisla\u00e7\u00f5es citadas nos Ajustes\n(5) - Nacional, mercadoria ou bem com Conte\u00fado de Importa\u00e7\u00e3o inferior ou igual a 40%\n(6) - Estrangeira - Importa\u00e7\u00e3o direta, sem similar nacional, constante em lista da CAMEX e g\u00e1s natural\n(7) - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante lista CAMEX e g\u00e1s natural\n(8) - Nacional, mercadoria ou bem com Conte\u00fado de Importa\u00e7\u00e3o superior a 70%",
+   "reqd": 1
+  },
+  {
+   "fieldname": "desconto",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Desconto",
+   "precision": "2"
+  },
+  {
+   "fieldname": "subtotal",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Subtotal",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Total",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "classe_imposto",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Classe Imposto",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cnpj_fabricante",
+   "fieldtype": "Data",
+   "label": "CNPJ do Fabricante",
+   "length": 14
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-12-06 21:09:02.717800",
+ "modified_by": "Administrator",
+ "module": "NFe NFCe for ERPNext",
+ "name": "Produto",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
 }

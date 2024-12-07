@@ -117,6 +117,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                                 indicator: "green",
                                 message: __("POS invoice {0} created succesfully", [r.doc.name]),
                             });
+                        }).finally(() => {
                             if (rule) {
                                 this.frm.doc.ignore_pricing_rule = 0;
                                 rule = false;
