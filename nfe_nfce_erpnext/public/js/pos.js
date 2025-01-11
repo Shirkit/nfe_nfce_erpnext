@@ -213,7 +213,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                 return abbr || "?";
             };
 
-            function strip(html){
+            function strip(html) {
                 let doc = new DOMParser().parseFromString(html, 'text/html');
                 return doc.body.textContent || "";
              }
@@ -247,6 +247,10 @@ frappe.require('point-of-sale.bundle.js', function () {
                         <div class="item-rate">${format_currency(price_list_rate, item.currency, precision) || 0} / ${uom == "Unidade" ? "un" : uom}</div>
                     </div>
                 </div>`;
+        }
+
+        get_items({ start = 0, page_length = 500, search_term = "" }) {
+            return super.get_items({ start, page_length, search_term });
         }
 
     };
