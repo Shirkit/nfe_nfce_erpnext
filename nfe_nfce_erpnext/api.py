@@ -556,6 +556,11 @@ def criarNotaFiscal(*args, **kwargs):
         nota.produtos.append(produto)
 
     x = 0
+    nota.valor_pagamento = 0
+    nota.forma_pagamento = selectOption(
+        str(90),
+        frappe.get_meta("Nota Fiscal").get_field("forma_pagamento").options.split("\n"),
+    )
     for payment in server_doc.payments:
         mode_of_payment = frappe.get_doc(
             "Mode of Payment",
@@ -615,9 +620,9 @@ def criarNotaFiscal(*args, **kwargs):
         server_doc.db_set("nf_ultima_nota", nota.name, notify=True, commit=True)
         #server_doc.save()
 
-    if submit:
-        nota.submit()
-        frappe.db.commit()
+        if submit:
+            nota.submit()
+            frappe.db.commit()
 
     return nota
 
@@ -731,7 +736,8 @@ def updatePosInvoice(doc, method=None):
 
 def submitPosInvoice(doc, method=None):
     nota = criarNotaFiscal(server_pos_invoice=doc, insert=True, submit=True, modelo=2)
-    emitida = emitirNotaFiscal(nota=nota)
+    if parseOption(nota.forma_pagamento) == 90:
+        emitida = emitirNotaFiscal(nota=nota)
     return
 
 def beforeInsertLoyaltyPointEntry(doc, method=None):
