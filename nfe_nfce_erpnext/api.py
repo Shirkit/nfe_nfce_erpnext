@@ -612,7 +612,7 @@ def criarNotaFiscal(*args, **kwargs):
             .options.split("\n"),
         )
 
-    if insert and server_doc is not None:
+    if insert and server_doc is not None and nota.valor_pagamento > 0:
         # print("Inserting")
         nota.insert()
         nota.save()
