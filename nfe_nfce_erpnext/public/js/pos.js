@@ -51,6 +51,48 @@ frappe.require('point-of-sale.bundle.js', function () {
         return cfg;
     }
 
+    erpnext.PointOfSale.Payment = class MyPosPayment extends erpnext.PointOfSale.Payment {
+        constructor({ events, wrapper }) {
+            super({ events, wrapper });
+        }
+
+        render_payment_section() {
+            super.render_payment_mode_dom();
+            super.make_invoice_fields_control();
+            super.update_totals_section();
+
+            this.$payment_modes.find(".mode-of-payment").get(0).click();
+            this.selected_mode.set_value(0);
+        }
+
+        bind_events() {
+            super.bind_events();
+            this.$component.off("click", ".submit-order-btn");
+            this.$component.on("click", ".submit-order-btn", () => {
+                const doc = this.events.get_frm().doc;
+                const paid_amount = doc.paid_amount;
+                const items = doc.items;
+
+                if (!items.length) {
+                    const message = __("You cannot submit empty order.");
+                    frappe.show_alert({ message, indicator: "orange" });
+                    frappe.utils.play_sound("error");
+                    return;
+                }
+
+                if (paid_amount == 0) {
+                    let d = frappe.confirm("Confirma pedido sem pagamento?", () => {
+                        this.events.submit_invoice();
+                    });
+                    d.set_title("Pedido sem pagamento");
+                } else {
+                    this.events.submit_invoice();
+                }
+            });
+        }
+    };
+
+
     erpnext.PointOfSale.Controller = class MyPosController extends erpnext.PointOfSale.Controller {
         constructor(wrapper) {
             super(wrapper);
