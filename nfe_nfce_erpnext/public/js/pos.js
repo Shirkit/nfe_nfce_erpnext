@@ -128,9 +128,9 @@ frappe.require('point-of-sale.bundle.js', function () {
                 wrapper: this.$components_wrapper,
                 events: {
                     get_frm: () => this.frm || {},
-    
+
                     get_customer_details: () => this.customer_details || {},
-    
+
                     toggle_other_sections: (show) => {
                         if (show) {
                             this.item_details.$component.is(":visible")
@@ -141,7 +141,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                             this.item_selector.toggle_component(true);
                         }
                     },
-    
+
                     submit_invoice: () => {
                         let rule = false;
                         if (!this.frm.doc.ignore_pricing_rule) {
@@ -258,7 +258,7 @@ frappe.require('point-of-sale.bundle.js', function () {
             function strip(html) {
                 let doc = new DOMParser().parseFromString(html, 'text/html');
                 return doc.body.textContent || "";
-             }
+            }
 
 
             function isNumber(num) {
