@@ -21,12 +21,14 @@ function add_nf_buttons(frm, server_invoice) {
 
             args: {
                 [server_invoice]: frm.doc.name,
-                "modelo": 1
+                "modelo": 1,
+                "insert": true
             },
             callback: function (r) {
                 console.log(r);
                 if (!r.exc) {
                     // var doc = frappe.model.sync(r.message);
+                    // TODO Se a nota não puder ser criada no servidor, redirecionar para criação temporária
                     frappe.set_route("Form", r.message.doctype, r.message.name);
                 }
             }
@@ -40,12 +42,14 @@ function add_nf_buttons(frm, server_invoice) {
 
             args: {
                 [server_invoice] : frm.doc.name,
-                "modelo": 2
+                "modelo": 2,
+                "insert": true
             },
             callback: function (r) {
                 console.log(r);
                 if (!r.exc) {
                     // var doc = frappe.model.sync(r.message);
+                    // TODO Se a nota não puder ser criada no servidor, redirecionar para criação temporária
                     frappe.set_route("Form", r.message.doctype, r.message.name);
                 }
             }

@@ -447,16 +447,15 @@ def criarNotaFiscal(*args, **kwargs):
             else nota.telefone + "," + primary_contact.phone
         )
 
-    # print(modelo)
-    # print(server_doc.customer_address)
+    # TODO retornou empty mesmo tendo salvo
     addresses = linked.get("Address")
-    # print(addresses)
 
+    if addresses is None or len(addresses) == 0:
+        addresses = get_linked_docs(
+            "Contact", linked.get("Contact")[0].name, linkinfo=get_linked_doctypes("Contact")
+        )      
     if modelo == 1 or modelo == "1":
         for address in addresses:
-            # print(address)
-            # print(address.address_type)
-            # print(address.city)
             address = frappe.get_doc("Address", address.name)
             if address.address_type == "Billing":
                 if (
@@ -483,7 +482,11 @@ def criarNotaFiscal(*args, **kwargs):
                     nota.email = (
                         address.email_id
                         if nota.email is None
-                        else nota.email + "," + address.email_id
+                        else (
+                            nota.email + "," + address.email_id
+                            if address.email_id is not None
+                            else nota.email
+                        )
                     )
                     nota.telefone = re.sub(
                         "\D",

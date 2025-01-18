@@ -4,7 +4,7 @@ frappe.ui.form.on("Nota Fiscal", {
         // create button for "Add to Knowledge Base"
         if (frm.doc.docstatus === 1) {
             if ((!frm.doc.chave || frm.doc.status.toLowerCase() != "aprovado")) {
-                frm.page.add_action_item(__('Emitir NF-e'), function () {
+                frm.page.add_action_item(__('Emitir Nota'), function () {
                     if (frm.doc.__unsaved) {
                         frappe.throw("Salve a nota antes de emitir");
                         return;
@@ -25,6 +25,7 @@ frappe.ui.form.on("Nota Fiscal", {
                                     else if (msg.success === true) {
                                         console.log(msg);
                                         frappe.msgprint("Nota emitida com sucesso. " + msg.modelo + " - " + msg.chave);
+                                        frm.refresh();
                                         // TODO tentar imprimir com QZTray
                                     }
                                 }
