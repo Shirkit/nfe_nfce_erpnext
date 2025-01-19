@@ -65,31 +65,6 @@ frappe.require('point-of-sale.bundle.js', function () {
             this.selected_mode.set_value(0);
         }
 
-        bind_events() {
-            super.bind_events();
-            this.$component.off("click", ".submit-order-btn");
-            this.$component.on("click", ".submit-order-btn", () => {
-                const doc = this.events.get_frm().doc;
-                const paid_amount = doc.paid_amount;
-                const items = doc.items;
-
-                if (!items.length) {
-                    const message = __("You cannot submit empty order.");
-                    frappe.show_alert({ message, indicator: "orange" });
-                    frappe.utils.play_sound("error");
-                    return;
-                }
-
-                if (paid_amount == 0) {
-                    let d = frappe.confirm("Confirma pedido sem pagamento?", () => {
-                        this.events.submit_invoice();
-                    });
-                    d.set_title("Pedido sem pagamento");
-                } else {
-                    this.events.submit_invoice();
-                }
-            });
-        }
     };
 
 

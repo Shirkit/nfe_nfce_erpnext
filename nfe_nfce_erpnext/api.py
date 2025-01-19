@@ -11,6 +11,12 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
+from frappe.model.mapper import get_mapped_doc
+from frappe.utils import flt
+from frappe.model.utils import get_fetch_values
+from erpnext.stock.doctype.item.item import get_item_defaults
+from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
+from erpnext.accounts.party import get_party_account
 from frappe.utils.file_manager import save_url
 
 tempStates = {
@@ -71,6 +77,7 @@ def parseOption(option):
         return option[option.find("(") + 1 : option.find(")")]
     return option
 
+# TODO Quando eu alterei no ambiente de produção o ambiente, não refletiu
 def webmaniaSettings():
     settings = frappe.get_doc("Nota Fiscal Settings")
     obj = {
@@ -560,10 +567,11 @@ def criarNotaFiscal(*args, **kwargs):
 
     x = 0
     nota.valor_pagamento = 0
-    nota.forma_pagamento = selectOption(
+    sem_pagamento = selectOption(
         str(90),
         frappe.get_meta("Nota Fiscal").get_field("forma_pagamento").options.split("\n"),
     )
+    nota.forma_pagamento = sem_pagamento
     for payment in server_doc.payments:
         mode_of_payment = frappe.get_doc(
             "Mode of Payment",
@@ -574,7 +582,7 @@ def criarNotaFiscal(*args, **kwargs):
             ),
         )
         amnt = payment.get("amount") if isinstance(payment, dict) else payment.amount
-        if amnt is None or amnt == 0:
+        if amnt is None or amnt == 0 or amnt == "0" or amnt == "" or not amnt:
             continue
         if x == 0:
             nota.valor_pagamento = amnt
@@ -597,6 +605,16 @@ def criarNotaFiscal(*args, **kwargs):
             forma.valor_pagamento = amnt
             nota.formas_pagamento.append(forma)
         x = x + 1
+    if nota.formas_pagamento is not None and len(nota.formas_pagamento) > 1:
+        for forma in nota.formas_pagamento:
+            if forma.valor_pagamento == sem_pagamento:
+                frappe.throw(
+                    title="Pagamento inválido",
+                    msg="Não é permitido dividir o pagamento para pagar depois.",
+                )
+                return json.dumps(
+                    {"error": "Não é permitido dividir o pagamento para pagar depois."}
+                )
 
     if server_doc.discount_amount is not None and server_doc.discount_amount > 0:
         nota.desconto += server_doc.discount_amount
@@ -615,7 +633,7 @@ def criarNotaFiscal(*args, **kwargs):
             .options.split("\n"),
         )
 
-    if insert and server_doc is not None and nota.valor_pagamento > 0:
+    if insert and server_doc is not None and nota.valor_pagamento > 0 and nota.forma_pagamento != sem_pagamento:
         # print("Inserting")
         nota.insert()
         nota.save()
@@ -650,6 +668,86 @@ def criarNotaFiscal(*args, **kwargs):
 
     # print(result)
 
+def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
+	def postprocess(source, target):
+		set_missing_values(source, target)
+		target.is_pos = False
+
+	def set_missing_values(source, target):
+		target.flags.ignore_permissions = True
+		target.run_method("set_missing_values")
+		target.run_method("set_po_nos")
+		target.run_method("calculate_taxes_and_totals")
+		target.run_method("set_use_serial_batch_fields")
+
+		if source.company_address:
+			target.update({"company_address": source.company_address})
+		else:
+			# set company address
+			target.update(get_company_address(target.company))
+
+		if target.company_address:
+			target.update(get_fetch_values("Sales Invoice", "company_address", target.company_address))
+
+		target.debit_to = get_party_account("Customer", source.customer, source.company)
+
+	def update_item(source, target, source_parent):
+		target.amount = flt(source.amount)
+		target.base_amount = target.amount
+		target.qty = source.qty
+
+		if target.item_code:
+			item = get_item_defaults(target.item_code, source_parent.company)
+			item_group = get_item_group_defaults(target.item_code, source_parent.company)
+			cost_center = item.get("selling_cost_center") or item_group.get("selling_cost_center")
+
+			if cost_center:
+				target.cost_center = cost_center
+
+	doclist = get_mapped_doc(
+		"POS Invoice",
+		source_name,
+		{
+			"POS Invoice": {
+				"doctype": "Sales Invoice",
+			},
+			"POS Invoice Item": {
+				"doctype": "Sales Invoice Item",
+				"postprocess": update_item,
+			},
+		},
+		target_doc,
+		postprocess,
+		ignore_permissions=ignore_permissions,
+	)
+
+	return doclist
+
+def criarSalesInvoice(*args, **kwargs):
+    insert = kwargs.get("insert") if kwargs.get("insert") is not None else False
+    submit = kwargs.get("submit") if kwargs.get("submit") is not None else False
+
+    server_doc = None
+
+    if kwargs.get("server_pos_invoice") is not None:
+        if isinstance(kwargs["server_pos_invoice"], str):
+            server_doc = frappe.get_doc("POS Invoice", kwargs["server_pos_invoice"])
+        else:
+            server_doc = frappe.get_doc("POS Invoice", kwargs["server_pos_invoice"].name)
+    else:
+        frappe.throw(
+            title="Pedido não encontrado",
+            msg="Um pedido precisa existir antes de criar uma Nota fiscal.",
+        )
+        return json.dumps(
+            {"error": "Um pedido precisa existir antes de criar uma Nota fiscal."}
+        )
+
+    invoice = make_sales_invoice(server_doc.name)
+    invoice.insert()
+    invoice.save()
+    invoice.submit()
+    frappe.db.commit()
 
 @frappe.whitelist()
 def pullDataCNPJ(*args, **kwargs):
@@ -733,13 +831,19 @@ def pullDataCNPJ(*args, **kwargs):
 
         # TODO recarregar a página após salvar
 
-
 def updatePosInvoice(doc, method=None):
     return
 
 def submitPosInvoice(doc, method=None):
+    print(doc)
     nota = criarNotaFiscal(server_pos_invoice=doc, insert=True, submit=True, modelo=2)
-    if parseOption(nota.forma_pagamento) == 90:
+    if parseOption(nota.forma_pagamento) == 90 or parseOption(nota.forma_pagamento) == "90":
+        # TODO Criar Sales Invoice
+        t = criarSalesInvoice(server_pos_invoice=doc)
+        print(t)
+        doc.cancel()
+        frappe.db.commit()
+    else:
         emitida = emitirNotaFiscal(nota=nota)
     return
 
