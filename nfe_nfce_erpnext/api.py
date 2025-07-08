@@ -831,6 +831,55 @@ def pullDataCNPJ(*args, **kwargs):
 
         # TODO recarregar a página após salvar
 
+@frappe.whitelist()
+def forceCancelDocument(*args, **kwargs):
+    source_name = kwargs.get("source_name")
+    if source_name is None:
+        frappe.throw(
+            title="Documento não encontrado",
+            msg="O documento que você está tentando cancelar não foi encontrado.",
+        )
+        return json.dumps({"error": "Documento não encontrado."})
+    
+    # Get the document by name
+    try:
+        doc = frappe.get_doc("POS Invoice", source_name)
+    except frappe.DoesNotExistError:
+        frappe.throw(
+            title="Documento não encontrado",
+            msg="O documento que você está tentando cancelar não foi encontrado.",
+        )
+        return json.dumps({"error": "Documento não encontrado."})
+    if doc.doctype not in ["POS Invoice"]:
+        frappe.throw(
+            title="Documento inválido",
+            msg="O documento que você está tentando cancelar não é um documento válido para esta operação.",
+        )
+        return json.dumps({"error": "Documento inválido."})
+    if doc.docstatus == 0:
+        frappe.throw(
+            title="Documento não submetido",
+            msg="O documento que você está tentando cancelar não foi submetido.",
+        )
+        return json.dumps({"error": "Documento não submetido."})
+    
+    if doc.doctype == "POS Invoice":
+        if doc.nf_ultima_nota is not None:
+            nota = frappe.get_doc("Nota Fiscal", doc.nf_ultima_nota)
+            if nota.docstatus == 1:
+                nota.cancel()
+                frappe.db.commit()
+        if doc.consolidated_invoice is not None:
+            consolidated_invoice = frappe.get_doc("Sales Invoice", doc.consolidated_invoice)
+            if consolidated_invoice.docstatus == 1:
+                consolidated_invoice.cancel()
+                frappe.db.commit()
+        doc.cancel()
+        frappe.db.commit()
+
+    return json.dumps({"success": True, "message": "Documento cancelado com sucesso."})
+
+
 def updatePosInvoice(doc, method=None):
     return
 

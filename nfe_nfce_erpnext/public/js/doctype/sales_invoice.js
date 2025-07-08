@@ -2,6 +2,28 @@ frappe.ui.form.on("POS Invoice", {
 
     timeline_refresh: function (frm) {
         add_nf_buttons(frm, "server_pos_invoice");
+        frm.add_custom_button(__('Forçar Cancelamento'), function () {
+            frappe.confirm(
+                'Tem certeza que deseja forçar o cancelamento deste documento? Esta ação não pode ser desfeita.',
+                function() {
+                    frappe.call({
+                        type: "POST",
+                        method: "nfe_nfce_erpnext.api.forceCancelDocument",
+                        args: {
+                            "source_name": frm.doc.name,
+                        },
+                        callback: function (r) {
+                            console.log(r);
+                            if (!r.exc) {
+                                frappe.msgprint("Cancelamento forçado com sucesso.");
+                                frm.reload_doc();
+                            }
+                        }
+                    });
+                }
+            );
+        }
+        );
     },
 });
 
