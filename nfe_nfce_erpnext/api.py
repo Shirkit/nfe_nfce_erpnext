@@ -864,18 +864,21 @@ def forceCancelDocument(*args, **kwargs):
         return json.dumps({"error": "Documento não submetido."})
     
     if doc.doctype == "POS Invoice":
+        doc.cancel()
+        doc.save()
+        frappe.db.commit()
         if doc.nf_ultima_nota is not None:
             nota = frappe.get_doc("Nota Fiscal", doc.nf_ultima_nota)
             if nota.docstatus == 1:
                 nota.cancel()
+                nota.save()
                 frappe.db.commit()
         if doc.consolidated_invoice is not None:
             consolidated_invoice = frappe.get_doc("Sales Invoice", doc.consolidated_invoice)
             if consolidated_invoice.docstatus == 1:
                 consolidated_invoice.cancel()
+                consolidated_invoice.save()
                 frappe.db.commit()
-        doc.cancel()
-        frappe.db.commit()
 
     return json.dumps({"success": True, "message": "Documento cancelado com sucesso."})
 
