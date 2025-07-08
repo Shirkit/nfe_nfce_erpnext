@@ -566,12 +566,12 @@ def criarNotaFiscal(*args, **kwargs):
         nota.produtos.append(produto)
 
     x = 0
-    nota.valor_pagamento = 0
+    nota.valor_pagamento = None
+    nota.forma_pagamento = None
     sem_pagamento = selectOption(
         str(90),
         frappe.get_meta("Nota Fiscal").get_field("forma_pagamento").options.split("\n"),
     )
-    nota.forma_pagamento = sem_pagamento
     for payment in server_doc.payments:
         mode_of_payment = frappe.get_doc(
             "Mode of Payment",
@@ -633,12 +633,12 @@ def criarNotaFiscal(*args, **kwargs):
             .options.split("\n"),
         )
 
-    if insert and server_doc is not None and nota.valor_pagamento > 0 and nota.forma_pagamento != sem_pagamento:
+    if insert and server_doc is not None and nota.forma_pagamento != sem_pagamento:
         # print("Inserting")
         nota.insert()
         nota.save()
-        frappe.db.commit()
         server_doc.db_set("nf_ultima_nota", nota.name, notify=True, commit=True)
+        frappe.db.commit()
         #server_doc.save()
 
         if submit:
@@ -792,14 +792,14 @@ def pullDataCNPJ(*args, **kwargs):
                 final = final[:5] + "-" + final[5:]
             telefone = phone[:3] + " " + phone[3:5] + " " + final
 
+        customer = frappe.get_doc(doctype, doc)
+
         inscricoes_estaduais = estabelecimento.get("inscricoes_estaduais")
         if len(inscricoes_estaduais) == 1:
             inscricao_estadual = inscricoes_estaduais[0].get("inscricao_estadual")
-
-        customer = frappe.get_doc(doctype, doc)
+            customer.nf_inscricao_estadual = inscricao_estadual
 
         customer.nf_razao_social = razao_social
-        customer.nf_inscricao_estadual = inscricao_estadual
 
         results = get_linked_docs(
             doctype, customer.name, linkinfo=get_linked_doctypes(doctype)

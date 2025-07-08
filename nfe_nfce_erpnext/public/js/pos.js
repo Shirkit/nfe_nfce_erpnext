@@ -273,14 +273,14 @@ frappe.require('point-of-sale.bundle.js', function () {
     };
 
     erpnext.PointOfSale.PastOrderSummary = class MyPastOrderSummary extends erpnext.PointOfSale.PastOrderSummary {
-        constructor({ wrapper, events }) {
+        constructor({ wrapper, settings, events }) {
             events.imprimir_nf = (name) => {
                 frappe.run_serially([
                     () => this.imprimir_nf(name),
                 ]);
             };
 
-            super({ wrapper, events });
+            super({ wrapper, settings, events });
         }
 
         imprimir_nf(name) {

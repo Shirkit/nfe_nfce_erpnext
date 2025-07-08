@@ -27,3 +27,9 @@ body[data-route="point-of-sale"] .point-of-sale-app > .payment-container > .paym
 .point-of-sale-app > .items-selector > .items-container > .item-wrapper .item-display {
     text-align: center;
 }
+
+.point-of-sale-app section {
+    height: calc(100vh - var(--page-head-height) - var(--navbar-height) - 32px);
+    min-height: 35rem;
+    max-height: calc(100vh - var(--page-head-height) - var(--navbar-height) - 32px);
+}
