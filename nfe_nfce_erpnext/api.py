@@ -864,33 +864,25 @@ def forceCancelDocument(*args, **kwargs):
         return json.dumps({"error": "Documento não submetido."})
     
     if doc.doctype == "POS Invoice":
-        doc.db_update({"docstatus": 2})  # Set docstatus to Cancelled
+        nota_ref = doc.nf_ultima_nota
+        consolidated_ref = doc.consolidated_invoice
+        
+        doc.db_set("nf_ultima_nota", None, commit=False)
+        doc.db_set("consolidated_invoice", None, commit=False)
         frappe.db.commit()
-        if doc.nf_ultima_nota is not None:
-            nota = frappe.get_doc("Nota Fiscal", doc.nf_ultima_nota)
-            if nota.docstatus == 1:
-                nota.db_update({"docstatus": 2})  # Set docstatus to Cancelled
-                frappe.db.commit()
-        if doc.consolidated_invoice is not None:
-            consolidated_invoice = frappe.get_doc("Sales Invoice", doc.consolidated_invoice)
-            if consolidated_invoice.docstatus == 1:
-                consolidated_invoice.db_update({"docstatus": 2})
-                frappe.db.commit()
+        
+        if nota_ref:
+            nota = frappe.get_doc("Nota Fiscal", nota_ref)
+            nota.flags.ignore_links = True
+            nota.cancel()
+        
+        if consolidated_ref:
+            consolidated = frappe.get_doc("Sales Invoice", consolidated_ref)
+            consolidated.flags.ignore_links = True
+            consolidated.cancel()
+        
+        doc.reload()
         doc.cancel()
-        doc.save()
-        frappe.db.commit()
-        if doc.nf_ultima_nota is not None:
-            nota = frappe.get_doc("Nota Fiscal", doc.nf_ultima_nota)
-            if nota.docstatus == 1:
-                nota.cancel()
-                nota.save()
-                frappe.db.commit()
-        if doc.consolidated_invoice is not None:
-            consolidated_invoice = frappe.get_doc("Sales Invoice", doc.consolidated_invoice)
-            if consolidated_invoice.docstatus == 1:
-                consolidated_invoice.cancel()
-                consolidated_invoice.save()
-                frappe.db.commit()
 
     return json.dumps({"success": True, "message": "Documento cancelado com sucesso."})
 
