@@ -258,7 +258,7 @@ def emitirNotaFiscal(*args, **kwargs):
         entrega["cidade"] = nota_db.entrega_cidade
 
         transporte["entrega"] = entrega
-        result.transporte = transporte
+        result["transporte"] = transporte
 
     # TODO entrega_telefone e entrega_email não está sendo salvo nem carregado
     # if nota_db.entrega_telefone is not None:
@@ -556,7 +556,7 @@ def criarNotaFiscal(*args, **kwargs):
         produto_loaded = frappe.get_doc("Item", item.get("item_code"))
 
         if not produto_loaded.get("nf_ncm") or not produto_loaded.get("nf_uom") or not produto_loaded.get("nf_classe_imposto") or not produto_loaded.get("nf_origem"):
-            if True or produto_loaded.get("item_name") is "Frete":
+            if produto_loaded.get("item_name") == "Frete":
                 nota.frete += item.get("amount")
                 nota.modalidade_frete = selectOption(
                     str(3),
