@@ -52,8 +52,8 @@ frappe.require('point-of-sale.bundle.js', function () {
     }
 
     erpnext.PointOfSale.Payment = class MyPosPayment extends erpnext.PointOfSale.Payment {
-        constructor({ events, wrapper }) {
-            super({ events, wrapper });
+        constructor({ events, wrapper, settings }) {
+            super({ events, wrapper, settings });
         }
 
         render_payment_section() {
@@ -101,6 +101,7 @@ frappe.require('point-of-sale.bundle.js', function () {
         init_payments() {
             this.payment = new erpnext.PointOfSale.Payment({
                 wrapper: this.$components_wrapper,
+                settings: this.settings,
                 events: {
                     get_frm: () => this.frm || {},
 
