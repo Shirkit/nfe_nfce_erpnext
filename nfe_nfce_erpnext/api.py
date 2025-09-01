@@ -230,34 +230,40 @@ def emitirNotaFiscal(*args, **kwargs):
     else:
         pedido["forma_pagamento"] = parseOption(nota_db.forma_pagamento)
         pedido["valor_pagamento"] = nota_db.valor_pagamento
+    
+    result["pedido"] = pedido
 
-    transporte = {}
-    transporte["volume"] = nota_db.volume
-    transporte["especie"] = nota_db.especie
-    transporte["peso_bruto"] = nota_db.peso_bruto
-    transporte["peso_liquido"] = nota_db.peso_liquido
+    if pedido["modalidade_frete"] != 9:
+        transporte = {}
+        transporte["volume"] = nota_db.volume
+        transporte["especie"] = nota_db.especie
+        transporte["peso_bruto"] = nota_db.peso_bruto
+        transporte["peso_liquido"] = nota_db.peso_liquido
 
-    if nota_db.entrega_cnpj is not None:
-        transporte["cnpj"] = int(nota_db.entrega_cnpj)
-        transporte["razao_social"] = nota_db.entrega_razao_social
-    elif nota_db.entrega_cpf is not None:
-        transporte["cpf"] = nota_db.entrega_cpf
-        transporte["nome_completo"] = nota_db.entrega_nome_completo
-        if nota_db.entrega_ie is not None:
-            transporte["ie"] = int(nota_db.entrega_ie)
-    transporte["uf"] = parseOption(nota_db.entrega_uf)
-    transporte["cep"] = nota_db.entrega_cep
-    transporte["endereco"] = nota_db.entrega_endereco
-    transporte["numero"] = nota_db.entrega_numero
-    transporte["complemento"] = nota_db.entrega_complemento
-    transporte["bairro"] = nota_db.entrega_bairro
-    transporte["cidade"] = nota_db.entrega_cidade
+        entrega = {}
+        if nota_db.entrega_cnpj is not None:
+            entrega["cnpj"] = int(nota_db.entrega_cnpj)
+            entrega["razao_social"] = nota_db.entrega_razao_social
+            if nota_db.entrega_ie is not None:
+                entrega["ie"] = int(nota_db.entrega_ie)
+        elif nota_db.entrega_cpf is not None:
+            entrega["cpf"] = nota_db.entrega_cpf
+            entrega["nome_completo"] = nota_db.entrega_nome_completo
+        entrega["uf"] = parseOption(nota_db.entrega_uf)
+        entrega["cep"] = nota_db.entrega_cep
+        entrega["endereco"] = nota_db.entrega_endereco
+        entrega["numero"] = nota_db.entrega_numero
+        entrega["complemento"] = nota_db.entrega_complemento
+        entrega["bairro"] = nota_db.entrega_bairro
+        entrega["cidade"] = nota_db.entrega_cidade
+
+        transporte["entrega"] = entrega
+        result.transporte = transporte
+
     # TODO entrega_telefone e entrega_email não está sendo salvo nem carregado
     # if nota_db.entrega_telefone is not None:
     #    transporte["telefone"] = int(nota_db.entrega_telefone)
     # transporte["email"] = nota_db.entrega_email
-
-    result["pedido"] = pedido
 
     headers = settings["headers"]
 
