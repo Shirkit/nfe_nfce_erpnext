@@ -230,34 +230,40 @@ def emitirNotaFiscal(*args, **kwargs):
     else:
         pedido["forma_pagamento"] = parseOption(nota_db.forma_pagamento)
         pedido["valor_pagamento"] = nota_db.valor_pagamento
+    
+    result["pedido"] = pedido
 
-    transporte = {}
-    transporte["volume"] = nota_db.volume
-    transporte["especie"] = nota_db.especie
-    transporte["peso_bruto"] = nota_db.peso_bruto
-    transporte["peso_liquido"] = nota_db.peso_liquido
+    if pedido["modalidade_frete"] != 9:
+        transporte = {}
+        transporte["volume"] = nota_db.volume
+        transporte["especie"] = nota_db.especie
+        transporte["peso_bruto"] = nota_db.peso_bruto
+        transporte["peso_liquido"] = nota_db.peso_liquido
 
-    if nota_db.entrega_cnpj is not None:
-        transporte["cnpj"] = int(nota_db.entrega_cnpj)
-        transporte["razao_social"] = nota_db.entrega_razao_social
-    elif nota_db.entrega_cpf is not None:
-        transporte["cpf"] = nota_db.entrega_cpf
-        transporte["nome_completo"] = nota_db.entrega_nome_completo
-        if nota_db.entrega_ie is not None:
-            transporte["ie"] = int(nota_db.entrega_ie)
-    transporte["uf"] = parseOption(nota_db.entrega_uf)
-    transporte["cep"] = nota_db.entrega_cep
-    transporte["endereco"] = nota_db.entrega_endereco
-    transporte["numero"] = nota_db.entrega_numero
-    transporte["complemento"] = nota_db.entrega_complemento
-    transporte["bairro"] = nota_db.entrega_bairro
-    transporte["cidade"] = nota_db.entrega_cidade
+        entrega = {}
+        if nota_db.entrega_cnpj is not None:
+            entrega["cnpj"] = int(nota_db.entrega_cnpj)
+            entrega["razao_social"] = nota_db.entrega_razao_social
+            if nota_db.entrega_ie is not None:
+                entrega["ie"] = int(nota_db.entrega_ie)
+        elif nota_db.entrega_cpf is not None:
+            entrega["cpf"] = nota_db.entrega_cpf
+            entrega["nome_completo"] = nota_db.entrega_nome_completo
+        entrega["uf"] = parseOption(nota_db.entrega_uf)
+        entrega["cep"] = nota_db.entrega_cep
+        entrega["endereco"] = nota_db.entrega_endereco
+        entrega["numero"] = nota_db.entrega_numero
+        entrega["complemento"] = nota_db.entrega_complemento
+        entrega["bairro"] = nota_db.entrega_bairro
+        entrega["cidade"] = nota_db.entrega_cidade
+
+        transporte["entrega"] = entrega
+        result["transporte"] = transporte
+
     # TODO entrega_telefone e entrega_email não está sendo salvo nem carregado
     # if nota_db.entrega_telefone is not None:
     #    transporte["telefone"] = int(nota_db.entrega_telefone)
     # transporte["email"] = nota_db.entrega_email
-
-    result["pedido"] = pedido
 
     headers = settings["headers"]
 
@@ -418,7 +424,7 @@ def criarNotaFiscal(*args, **kwargs):
     )
     modelo = parseOption(nota.modelo)
 
-    customer = frappe.get_doc("Customer", customer)
+    customer = frappe.get_cached_doc("Customer", customer)
     linked = get_linked_docs(
         "Customer", customer.name, linkinfo=get_linked_doctypes("Customer")
     )
@@ -436,23 +442,35 @@ def criarNotaFiscal(*args, **kwargs):
 
     contacts = linked.get("Contact")
 
-    if (modelo == 1 or modelo == "1") and customer.customer_primary_address is not None:
-        primary_address = frappe.get_doc("Address", customer.customer_primary_address)
-        nota.email = primary_address.email_id
-        nota.telefone = primary_address.phone
+    for contact in contacts:
+        contact = frappe.get_cached_doc("Contact", contact.name)
+        if contact.is_billing_contact == 1:
+            if contact.email_id is not None and nota.email is None:
+                nota.email = contact.email_id
+            if contact.phone is not None and nota.telefone is None:
+                nota.telefone = re.sub("\D", "", contact.phone)
 
-    if (modelo == 1 or modelo == "1") and customer.customer_primary_contact is not None:
-        primary_contact = frappe.get_doc("Contact", customer.customer_primary_contact)
-        nota.email = (
-            primary_contact.email_id
-            if nota.email is None
-            else nota.email + "," + primary_contact.email_id
-        )
-        nota.telefone = (
-            primary_contact.phone
-            if nota.telefone is None
-            else nota.telefone + "," + primary_contact.phone
-        )
+    if (modelo == 1 or modelo == "1") and customer.customer_primary_address is not None and (nota.email is None or nota.telefone is None):
+        primary_address = frappe.get_cached_doc("Address", customer.customer_primary_address)
+        if nota.email is None:
+            nota.email = primary_address.email_id
+        if nota.telefone is None:
+            nota.telefone = primary_address.phone
+
+    if (modelo == 1 or modelo == "1") and customer.customer_primary_contact is not None and (nota.email is None or nota.telefone is None):
+        primary_contact = frappe.get_cached_doc("Contact", customer.customer_primary_contact)
+        if nota.email is None:
+            nota.email = (
+                primary_contact.email_id
+                if nota.email is None
+                else nota.email + "," + primary_contact.email_id
+            )
+        if nota.telefone is None:
+            nota.telefone = (
+                primary_contact.phone
+                if nota.telefone is None
+                else nota.telefone + "," + primary_contact.phone
+            )
 
     # TODO retornou empty mesmo tendo salvo
     addresses = linked.get("Address")
@@ -463,7 +481,7 @@ def criarNotaFiscal(*args, **kwargs):
         )      
     if modelo == 1 or modelo == "1":
         for address in addresses:
-            address = frappe.get_doc("Address", address.name)
+            address = frappe.get_cached_doc("Address", address.name)
             if address.address_type == "Billing":
                 if (
                     address.city is not None
@@ -486,15 +504,16 @@ def criarNotaFiscal(*args, **kwargs):
                         .options.split("\n"),
                     )
                     nota.cep = re.sub("\D", "", address.pincode)
-                    nota.email = (
-                        address.email_id
-                        if nota.email is None
-                        else (
-                            nota.email + "," + address.email_id
-                            if address.email_id is not None
-                            else nota.email
+                    if nota.email is None:
+                        nota.email = (
+                            address.email_id
+                            if nota.email is None
+                            else (
+                                nota.email + "," + address.email_id
+                                if address.email_id is not None
+                                else nota.email
+                            )
                         )
-                    )
                     nota.telefone = re.sub(
                         "\D",
                         "",
@@ -537,6 +556,15 @@ def criarNotaFiscal(*args, **kwargs):
         produto_loaded = frappe.get_doc("Item", item.get("item_code"))
 
         if not produto_loaded.get("nf_ncm") or not produto_loaded.get("nf_uom") or not produto_loaded.get("nf_classe_imposto") or not produto_loaded.get("nf_origem"):
+            if produto_loaded.get("item_name") == "Frete":
+                nota.frete += item.get("amount")
+                nota.modalidade_frete = selectOption(
+                    str(3),
+                    frappe.get_meta("Nota Fiscal")
+                    .get_field("modalidade_frete")
+                    .options.split("\n"),
+                )
+                continue
             frappe.throw(
                 title="Produto não configurado",
                 msg="O produto "
